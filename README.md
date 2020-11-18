@@ -14,34 +14,30 @@
 ## 二、如何运行
 
 打开RacingGames.sln，更新SDK后可直接运行。
-
-![image-20201118161643648](C:\Users\67093\AppData\Roaming\Typora\typora-user-images\image-20201118161643648.png)
+[![DmW7rt.png](https://s3.ax1x.com/2020/11/18/DmW7rt.png)](https://imgchr.com/i/DmW7rt)
 
 实际只有三个源文件
 
 ### 三、TODO
 
 - [ ] **修改天空盒，六个面图片，main.cpp:148行**
-
-![image-20201118161805944](C:\Users\67093\AppData\Roaming\Typora\typora-user-images\image-20201118161805944.png)
+[![DmWHqP.png](https://s3.ax1x.com/2020/11/18/DmWHqP.png)](https://imgchr.com/i/DmWHqP)
 
 - [ ] **修改汽车模型为人体模型，main.cpp:190**
-
-![image-20201118161944579](C:\Users\67093\AppData\Roaming\Typora\typora-user-images\image-20201118161944579.png)
+[![DmWLa8.png](https://s3.ax1x.com/2020/11/18/DmWLa8.png)](https://imgchr.com/i/DmWLa8)
 
 - [ ] **地图建模，添加新模型组件，并渲染main.cpp:190**
 
-![image-20201118161944579](C:\Users\67093\AppData\Roaming\Typora\typora-user-images\image-20201118161944579.png)
+[![DmWqVf.png](https://s3.ax1x.com/2020/11/18/DmWqVf.png)](https://imgchr.com/i/DmWqVf)
 
 main.cpp:281
-
-![image-20201118162332134](C:\Users\67093\AppData\Roaming\Typora\typora-user-images\image-20201118162332134.png)
+[![DmWTKI.png](https://s3.ax1x.com/2020/11/18/DmWTKI.png)](https://imgchr.com/i/DmWTKI)
 
 - [ ] **修改相机，相机跟踪人体，并调整为第一人称视角**
 
 main.cpp:426行
 
-![image-20201118162457151](C:\Users\67093\AppData\Roaming\Typora\typora-user-images\image-20201118162457151.png)
+[![DmWOIS.png](https://s3.ax1x.com/2020/11/18/DmWOIS.png)](https://imgchr.com/i/DmWOIS)
 
 
 
