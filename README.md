@@ -4,17 +4,12 @@
 
 [![DmWCND.png](https://s3.ax1x.com/2020/11/18/DmWCND.png)](https://imgchr.com/i/DmWCND)
 
-\- asset 存放工程相关资源
-
- 	\- textures 存放天空盒的原图
-
-	 \- models 存放模型
-
-\- include 存放引用的头文件
-
-\- lib 存放引用的 lib 文件
-
-\- shader 存放着色器文件 
+- asset 存放工程相关资源
+  - textures 存放天空盒的原图
+  - models 存放模型
+- include 存放引用的头文件
+- lib 存放引用的 lib 文件
+- shader 存放着色器文件
 
 ## 二、如何运行
 
