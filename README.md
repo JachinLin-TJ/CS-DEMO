@@ -8,7 +8,7 @@
 
  	\- textures 存放天空盒的原图
 
-​	 \- models 存放模型
+	 \- models 存放模型
 
 \- include 存放引用的头文件
 
