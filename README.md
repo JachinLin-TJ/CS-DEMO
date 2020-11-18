@@ -2,7 +2,7 @@
 
 ## 一、项目结构
 
-![image-20201118161425960](C:\Users\67093\AppData\Roaming\Typora\typora-user-images\image-20201118161425960.png)
+[![DmWCND.png](https://s3.ax1x.com/2020/11/18/DmWCND.png)](https://imgchr.com/i/DmWCND)
 
 \- asset 存放工程相关资源
 
