@@ -317,16 +317,7 @@ int main()
 // ---------------------------------
 // 初始化
 // ---------------------------------
-void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
-{
-    if (action == GLFW_PRESS) switch (button)
-    {
-    case GLFW_MOUSE_BUTTON_LEFT:
-        std::cout << "Mosue left button clicked!" << std::endl;
-        break;
-    }
-    return;
-}
+
 GLFWwindow* windowInit()
 {
     // 初始化配置
@@ -347,13 +338,12 @@ GLFWwindow* windowInit()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
-    glfwSetMouseButtonCallback(window, mouseButton_callback);
+
     // 令GLFW捕捉用户的鼠标
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     return window;
 }
-
 
 bool init()
 {
@@ -580,10 +570,7 @@ void handleKeyInput(GLFWwindow* window)
     if (!isCameraFixed) {
         // 相机 WSAD 前后左右 Space上 左Ctrl下
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        {
-            std::cout << "W";
             camera.ProcessKeyboard(FORWARD, deltaTime);
-        }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
             camera.ProcessKeyboard(BACKWARD, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
@@ -634,10 +621,6 @@ void handleKeyInput(GLFWwindow* window)
 // 按键回调函数，使得一次按键只触发一次事件
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (key == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        
-        std::cout << "LEFT BUTTON" << std::endl;
-    }
     if (key == GLFW_KEY_C && action == GLFW_PRESS) {
         isCameraFixed = !isCameraFixed;
         string info = isCameraFixed ? "切换为固定视角" : "切换为自由视角";
