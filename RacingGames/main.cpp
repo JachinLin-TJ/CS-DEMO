@@ -18,7 +18,7 @@
 
 #pragma comment(lib, "glfw3.lib")
 #pragma comment(lib, "assimp.lib")
-
+#define DEBUG_MODE
 // ------------------------------------------
 // 函数声明
 // ------------------------------------------
@@ -43,6 +43,7 @@ void renderSkyBox(Shader& shader);
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void mouseButton_callback(GLFWwindow* window, int button, int action, int mods);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void handleKeyInput(GLFWwindow* window);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -337,6 +338,7 @@ GLFWwindow* windowInit()
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetMouseButtonCallback(window, mouseButton_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
     // 令GLFW捕捉用户的鼠标
@@ -568,9 +570,14 @@ void handleKeyInput(GLFWwindow* window)
         glfwSetWindowShouldClose(window, true);
 
     if (!isCameraFixed) {
-        // 相机 WSAD 前后左右 Space上 左Ctrl下
+        // 相机 WSAD 前后左右; SHIFT 奔跑
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            camera.ProcessKeyboard(FORWARD, deltaTime);
+        {
+            if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+                camera.ProcessKeyboard(FORWARD_FAST, deltaTime);
+            else
+                camera.ProcessKeyboard(FORWARD, deltaTime);
+        }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
             camera.ProcessKeyboard(BACKWARD, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
@@ -593,6 +600,7 @@ void handleKeyInput(GLFWwindow* window)
     }
     */
     // 车车移动
+    /*
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
         car.ProcessKeyboard(CAR_FORWARD, deltaTime);
 
@@ -617,9 +625,9 @@ void handleKeyInput(GLFWwindow* window)
         if (isCameraFixed)
             camera.ZoomIn();
     }
-    
+    */
     // 回调监听按键（一个按键只会触发一次事件）
-    //glfwSetKeyCallback(window, key_callback);
+    glfwSetKeyCallback(window, key_callback);
 }
 
 // 按键回调函数，使得一次按键只触发一次事件
@@ -631,6 +639,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         string info = isCameraFixed ? "切换为固定视角" : "切换为自由视角";
         std::cout << "[CAMERA]" << info << std::endl;
     }
+    if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+        //预留给换弹
+        ;
+    }
+    /*
     if (key == GLFW_KEY_X && action == GLFW_PRESS) {
         isPolygonMode = !isPolygonMode;
         if (isPolygonMode) {
@@ -641,6 +654,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         string info = isPolygonMode ? "切换为线框图渲染模式" : "切换为正常渲染模式";
         std::cout << "[POLYGON_MODE]" << info << std::endl;
     }
+    */
 }
 
 // 鼠标移动
@@ -662,7 +676,20 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
         camera.ProcessMouseMovement(xoffset, yoffset);
     }
 }
-
+//鼠标按键
+void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if (action == GLFW_PRESS)
+        switch (button)
+        {
+        case GLFW_MOUSE_BUTTON_LEFT:
+#ifdef DEBUG_MODE
+            std::cout << "Pressed MOUSE LEFT BUTTON" << std::endl;
+#endif
+            break;
+        }
+    return;
+}
 // 鼠标滚轮
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
