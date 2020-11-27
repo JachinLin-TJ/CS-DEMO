@@ -1,5 +1,7 @@
 /.vs/
 /.vscode/
 /Debug/
+/Release/
 /RacingGames/x64
 /RacingGames/Debug
+/RacingGames/Release
