@@ -97,18 +97,24 @@ public:
     void ProcessKeyboard(Camera_Movement direction, float deltaTime)
     {
         float velocity = MovementSpeed * deltaTime;
+        glm::vec3 Front_Person = Front;
+        Front_Person.y = 0;
+        glm::vec3 Right_Person = Right;
+        Right_Person.y = 0;
         if (direction == FORWARD)
-            Position += Front * velocity;
+            Position += Front_Person * velocity;
         if (direction == BACKWARD)
-            Position -= Front * velocity;
+            Position -= Front_Person * velocity;
         if (direction == LEFT)
-            Position -= Right * velocity;
+            Position -= Right_Person * velocity;
         if (direction == RIGHT)
-            Position += Right * velocity;
+            Position += Right_Person * velocity;
+        /*
         if (direction == UP)
             Position += WorldUp * velocity;
         if (direction == DOWN)
             Position -= WorldUp * velocity;
+        */
     }
 
     // 接受鼠标移动
@@ -176,6 +182,7 @@ private:
         // 计算新的 Front 向量
         glm::vec3 front;
         front.x = -sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+        //front.y = sin(glm::radians(Pitch));
         front.y = sin(glm::radians(Pitch));
         front.z = -cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
         Front = glm::normalize(front);

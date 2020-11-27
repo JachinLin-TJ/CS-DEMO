@@ -577,17 +577,21 @@ void handleKeyInput(GLFWwindow* window)
             camera.ProcessKeyboard(LEFT, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
             camera.ProcessKeyboard(RIGHT, deltaTime);
+        /*
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
             camera.ProcessKeyboard(UP, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
             camera.ProcessKeyboard(DOWN, deltaTime);
-    } else {
+        */
+    } 
+    /*
+    else {
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
             fixedCamera.ProcessKeyboard(CAMERA_LEFT, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
             fixedCamera.ProcessKeyboard(CAMERA_RIGHT, deltaTime);
     }
-
+    */
     // 车车移动
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
         car.ProcessKeyboard(CAR_FORWARD, deltaTime);
@@ -615,12 +619,13 @@ void handleKeyInput(GLFWwindow* window)
     }
     
     // 回调监听按键（一个按键只会触发一次事件）
-    glfwSetKeyCallback(window, key_callback);
+    //glfwSetKeyCallback(window, key_callback);
 }
 
 // 按键回调函数，使得一次按键只触发一次事件
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+
     if (key == GLFW_KEY_C && action == GLFW_PRESS) {
         isCameraFixed = !isCameraFixed;
         string info = isCameraFixed ? "切换为固定视角" : "切换为自由视角";
