@@ -44,7 +44,7 @@ void renderSkyBox(Shader& shader);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void mouseButton_callback(GLFWwindow* window, int button, int action, int mods);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
 void handleKeyInput(GLFWwindow* window);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
@@ -339,7 +339,7 @@ GLFWwindow* windowInit()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetMouseButtonCallback(window, mouseButton_callback);
-    glfwSetScrollCallback(window, scroll_callback);
+    
 
     // 令GLFW捕捉用户的鼠标
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -412,19 +412,13 @@ void setDeltaTime()
     lastFrame = currentFrame;
 }
 
-void changeLightPosAsTime()
-{
-    float freq = 0.1;
-    lightPos.x = 1.0 + cos(glfwGetTime() * freq) * -0.5f;
-    lightPos.z = -1.0 + sin(glfwGetTime() * freq) * 0.5f;
-    lightPos.y = 1.0 + cos(glfwGetTime() * freq) * 0.5f;
-    lightDirection = glm::normalize(lightPos);
-}
+
 
 // ---------------------------------
 // 相机位置更新
 // ---------------------------------
 
+//此函数暂时无效
 void updateFixedCamera()
 {
     // 自动逐渐复原Zoom为默认值
@@ -633,7 +627,6 @@ void handleKeyInput(GLFWwindow* window)
 // 按键回调函数，使得一次按键只触发一次事件
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-
     if (key == GLFW_KEY_C && action == GLFW_PRESS) {
         isCameraFixed = !isCameraFixed;
         string info = isCameraFixed ? "切换为固定视角" : "切换为自由视角";
@@ -683,6 +676,7 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
         switch (button)
         {
         case GLFW_MOUSE_BUTTON_LEFT:
+            //射击
 #ifdef DEBUG_MODE
             std::cout << "Pressed MOUSE LEFT BUTTON" << std::endl;
 #endif
@@ -690,11 +684,7 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
         }
     return;
 }
-// 鼠标滚轮
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-    camera.ProcessMouseScroll(yoffset);
-}
+
 
 // ---------------------------------
 // 窗口相关函数

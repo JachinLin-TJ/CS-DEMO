@@ -2,32 +2,15 @@
 D:\projects\OpenGL\CS-DEMO\RacingGames\include\my\car.h(102,34): warning C4018: “>”: 有符号/无符号不匹配
 D:\projects\OpenGL\CS-DEMO\RacingGames\include\my\car.h(112,39): warning C4018: “>”: 有符号/无符号不匹配
 D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(410,24): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(417,21): warning C4305: “初始化”: 从“double”到“float”截断
-D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(418,22): warning C4244: “=”: 从“double”转换到“T”，可能丢失数据
-          with
-          [
-              T=float
-          ]
-D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(419,23): warning C4244: “=”: 从“double”转换到“T”，可能丢失数据
-          with
-          [
-              T=float
-          ]
-D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(420,22): warning C4244: “=”: 从“double”转换到“T”，可能丢失数据
-          with
-          [
-              T=float
-          ]
-D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(665,21): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(666,21): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(670,23): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(671,23): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(673,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(674,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(696,31): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(658,21): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(659,21): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(663,23): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(664,23): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(666,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\projects\OpenGL\CS-DEMO\RacingGames\main.cpp(667,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
   正在生成代码
-  30 of 1046 functions ( 2.9%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    13 functions had inline decision re-evaluated but remain unchanged
+  12 of 1044 functions ( 1.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    4 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成
   RacingGames.vcxproj -> D:\projects\OpenGL\CS-DEMO\Release\RacingGames.exe

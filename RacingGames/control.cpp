@@ -116,6 +116,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 
 }
+
+/*
+*如何使用以下两个函数：
+glfwSetCursorPosCallback(window, mouse_callback);
+glfwSetMouseButtonCallback(window, mouseButton_callback);
+glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);	//捕获鼠标，使其不在屏幕中显示且可以不受视窗限制无限移动
+*/
+
 // 鼠标按键
 void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
 {
