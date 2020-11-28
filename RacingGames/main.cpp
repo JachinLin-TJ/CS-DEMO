@@ -71,6 +71,7 @@ bool isPolygonMode = false;
 
 // 世界坐标系Y轴单位向量
 glm::vec3 WORLD_UP(0.0f, 1.0f, 0.0f);
+glm::vec3 WORLD_X(1.0f, 0.0f, 0.0f);
 
 // 汽车
 Car car(glm::vec3(0.0f, 0.05f, 0.0f));
@@ -566,14 +567,27 @@ void renderStopSign(Model& model, Shader& shader)
 
     model.Draw(shader);
 }
+
+void GunRotate(glm::mat4 & modelMatrix, glm::vec3  &Point, float degree)
+{
+    modelMatrix = glm::translate(modelMatrix, Point);
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(degree), WORLD_X);
+    modelMatrix = glm::translate(modelMatrix, -Point);
+
+}
 void renderGun(Model& model, glm::mat4 modelMatrix, Shader& shader)
 {
     modelMatrix = glm::rotate(modelMatrix, glm::radians(car.getYaw() - car.getDelayYaw() / 2), WORLD_UP);
-    
-    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.5f, 1.5f, 3.5f));
+    GunRotate(modelMatrix, glm::vec3(0.0f, 0.0f, 4.0f), (car.getPitch() - car.getDelayPitch() / 2));
+
+    // modelMatrix = glm::rotate(modelMatrix, glm::radians(-(car.getPitch() - car.getDelayPitch() / 2)), WORLD_X);
+
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.5f, 1.5f, 4.0f));
     modelMatrix = glm::rotate(modelMatrix, glm::radians(-180.0f), WORLD_UP);
     modelMatrix = glm::scale(modelMatrix, glm::vec3(0.01f, 0.01f, 0.01f));
 
+    // GunRotate(modelMatrix, glm::vec3(0.0f, 0.0f, 10.0f), -(car.getPitch() - car.getDelayPitch() / 2));
+    // 
     // 应用变换矩阵
     shader.setMat4("model", modelMatrix);
 
@@ -586,7 +600,7 @@ void renderGun(Model& model, Shader& shader)
     shader.setMat4("view", viewMatrix);
     // 模型转换
     glm::mat4 modelMatrix = glm::mat4(1.0f);
-    modelMatrix = glm::translate(modelMatrix, glm::vec3(2.0f, 1.5f, -4.0f));
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(2.0f, 1.5f, -7.0f));
     modelMatrix = glm::rotate(modelMatrix, glm::radians(-180.0f), WORLD_UP);
     modelMatrix = glm::scale(modelMatrix, glm::vec3(0.01f, 0.01f, 0.01f));
     shader.setMat4("model", modelMatrix);
