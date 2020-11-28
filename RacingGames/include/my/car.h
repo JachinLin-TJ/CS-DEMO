@@ -149,10 +149,12 @@ public:
 		Pitch += yoffset;
 
 		// 限制角度以避免翻转问题
-		if (Pitch > 89.0f)
-			Pitch = 89.0f;
-		if (Pitch < -89.0f)
-			Pitch = -89.0f;
+		const float max_Pitch = 60.0f;
+		const float min_Pitch = -60.0f;
+		if (Pitch > max_Pitch)
+			Pitch = max_Pitch;
+		if (Pitch < min_Pitch)
+			Pitch = min_Pitch;
 
 		updateFront();
 		updateLeft();
