@@ -29,12 +29,11 @@ void depthMapFBOInit();
 void skyboxInit();
 
 void setDeltaTime();
-void changeLightPosAsTime();
 void updateFixedCamera();
 
 // 使用“&”引用性能更好
 void renderLight(Shader& shader);
-void renderCarAndCamera(Model& carModel, Model& cameraModel, Shader& shader);
+void renderCarAndCamera(Model& carModel,  Shader& shader);
 void renderCar(Model& model, glm::mat4 modelMatrix, Shader& shader);
 void renderCamera(Model& model, glm::mat4 modelMatrix, Shader& shader);
 void renderStopSign(Model& model, Shader& shader);
@@ -195,7 +194,7 @@ int main()
     // 汽车模型
     Model carModel(FileSystem::getPath("asset/models/obj/Lamborghini/Lamborghini.obj"));
     // 相机模型
-    Model cameraModel(FileSystem::getPath("asset/models/obj/camera-cube/camera-cube.obj"));
+    //Model cameraModel(FileSystem::getPath("asset/models/obj/camera-cube/camera-cube.obj"));
     // 赛道模型
     Model raceTrackModel(FileSystem::getPath("asset/models/obj/race-track/race-track.obj"));
     // STOP牌模型
@@ -253,7 +252,7 @@ int main()
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
         // 使用深度shader渲染生成场景
         glClear(GL_DEPTH_BUFFER_BIT);
-        renderCarAndCamera(carModel, cameraModel, depthShader);
+        renderCarAndCamera(carModel, depthShader);
         renderRaceTrack(raceTrackModel, depthShader);
         renderStopSign(stopSignModel, depthShader);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -280,7 +279,7 @@ int main()
         }
 
         // 使用shader渲染car和Camera（层级模型）
-        renderCarAndCamera(carModel, cameraModel, shader);
+        renderCarAndCamera(carModel,  shader);
 
         // 渲染Stop牌
         renderStopSign(stopSignModel, shader);
@@ -451,7 +450,7 @@ void renderLight(Shader& shader)
     glBindTexture(GL_TEXTURE_2D, depthMap);
 }
 
-void renderCarAndCamera(Model& carModel, Model& cameraModel, Shader& shader)
+void renderCarAndCamera(Model& carModel, Shader& shader)
 {
     // 视图转换
     glm::mat4 viewMatrix = camera.GetViewMatrix();
@@ -474,7 +473,7 @@ void renderCarAndCamera(Model& carModel, Model& cameraModel, Shader& shader)
     // 由于mat4作函数参数时为值传递，故不需要备份modelMatrix
 
     // 渲染相机
-    renderCamera(cameraModel, modelMatrix, shader);
+    //renderCamera(cameraModel, modelMatrix, shader);
 }
 
 // 渲染汽车
