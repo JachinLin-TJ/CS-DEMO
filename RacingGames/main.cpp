@@ -79,7 +79,7 @@ Car car(glm::vec3(0.0f, 0.05f, 0.0f));
 glm::vec3 cameraPos(0.0f, 2.0f, 5.0f);
 Camera camera(cameraPos);
 FixedCamera fixedCamera(cameraPos);
-bool isCameraFixed = true;
+
 
 // 光照相关属性
 glm::vec3 lightPos(-1.0f, 1.0f, -1.0f);
@@ -202,8 +202,8 @@ int main()
     Model raceTrackModel(FileSystem::getPath("asset/models/obj/race-track/race-track.obj"));
     
     // 枪械模型
-    // Model anotherstopSignModel(FileSystem::getPath("asset/models/obj/ACPGun/Handgun_obj.obj"));
-    // Model anotherstopSignModel(FileSystem::getPath("asset/models/obj/DragonSniper/AWP_Dragon_Lore.obj"));
+    // Model another_rifleModel(FileSystem::getPath("asset/models/obj/ACPGun/Handgun_obj.obj"));
+    // Model another_rifleModel(FileSystem::getPath("asset/models/obj/DragonSniper/AWP_Dragon_Lore.obj"));
     Model rifleModel(FileSystem::getPath("asset/models/obj/AK47/AK47.obj"));
 
 
@@ -225,9 +225,6 @@ int main()
     while (!glfwWindowShouldClose(window)) {
         // 计算一帧的时间长度以便于使帧绘制速度均匀
         setDeltaTime();
-
-        // 随着时间改变光源位置
-        // changeLightPosAsTime();
 
         // 监听按键
         handleKeyInput(window);
@@ -260,10 +257,7 @@ int main()
         // 使用深度shader渲染生成场景
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        renderCarAndCamera(rifleModel, cameraModel, depthShader);
-        // renderCarAndCamera(carModel, cameraModel, depthShader);
-
-
+        renderGunAndCamera(rifleModel, cameraModel, depthShader);
         renderRaceTrack(raceTrackModel, depthShader);
         
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -285,19 +279,12 @@ int main()
         car.UpdateDelayPitch();
         car.UpdateDelayPosition();
 
-        // 切换为相机固定时，需要每次帧修改相机状态
-        if (isCameraFixed) {
-            updateFixedCamera();
-        }
 
-        // 使用shader渲染car和Camera（层级模型）
+        updateFixedCamera();
 
+        // 使用shader渲染Gun和Camera（层级模型）
         renderGunAndCamera(rifleModel, cameraModel, shader);
     
-        // 渲染Stop牌
-        renderStopSign(stopSignModel, shader);
-        // 渲染Stop牌
-       // renderGun(rifleModel, shader);
         // 渲染赛道
         renderRaceTrack(raceTrackModel, shader);
 
@@ -436,7 +423,6 @@ void updateFixedCamera()
 {
     // 自动逐渐复原Zoom为默认值
     camera.ZoomRecover();
-
     // 处理相机相对于车坐标系下的向量坐标转换为世界坐标系下的向量
     float angle = glm::radians(-car.getMidValYaw());
     glm::mat4 rotateMatrix(
@@ -630,40 +616,8 @@ void handleKeyInput(GLFWwindow* window)
     // esc退出
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-    /*
-    if (!isCameraFixed) {
-        // 相机 WSAD 前后左右; SHIFT 奔跑
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        {
-            if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-                camera.ProcessKeyboard(FORWARD_FAST, deltaTime);
-            else
-                camera.ProcessKeyboard(FORWARD, deltaTime);
-        }
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            camera.ProcessKeyboard(BACKWARD, deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            camera.ProcessKeyboard(LEFT, deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            camera.ProcessKeyboard(RIGHT, deltaTime);
-        
-        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-            camera.ProcessKeyboard(UP, deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-            camera.ProcessKeyboard(DOWN, deltaTime);
-        
-    } 
-    */
-    /*
-    else {
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            fixedCamera.ProcessKeyboard(CAMERA_LEFT, deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            fixedCamera.ProcessKeyboard(CAMERA_RIGHT, deltaTime);
-    }
-    */
-    
-    //锁定镜头移动
+   
+    //移动
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) 
         car.ProcessKeyboard(CAR_FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
@@ -680,25 +634,14 @@ void handleKeyInput(GLFWwindow* window)
 // 按键回调函数，使得一次按键只触发一次事件
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (key == GLFW_KEY_R && action == GLFW_PRESS) {
-        //预留给换弹
+    //预留给换弹
+    if (key == GLFW_KEY_R && action == GLFW_PRESS) {  
 #ifdef DEBUG_MODE
         std::cout << "Pressed R" << std::endl;
 #endif
         ;
     }
-    /*
-    if (key == GLFW_KEY_X && action == GLFW_PRESS) {
-        isPolygonMode = !isPolygonMode;
-        if (isPolygonMode) {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        } else {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        }
-        string info = isPolygonMode ? "切换为线框图渲染模式" : "切换为正常渲染模式";
-        std::cout << "[POLYGON_MODE]" << info << std::endl;
-    }
-    */
+    
 }
 
 // 鼠标移动
