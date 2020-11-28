@@ -705,6 +705,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
     if (key == GLFW_KEY_R && action == GLFW_PRESS) {
         //Ô¤Áô¸ø»»µ¯
+#ifdef DEBUG_MODE
+        std::cout << "Pressed R" << std::endl;
+#endif
         ;
     }
     /*
