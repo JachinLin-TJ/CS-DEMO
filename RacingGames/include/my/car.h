@@ -26,7 +26,7 @@ public:
 	// 存储旧Yaw信息，实现漂移
 	queue<float> HistoryYaw;
 	queue<float> HistoryPitch;
-	int DelayFrameNum = 20;
+	int DelayFrameNum = 1;
 	float DelayYaw;
 	float DelayPitch;
 	// 实现汽车缓动与缓停
