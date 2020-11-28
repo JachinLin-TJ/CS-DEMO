@@ -201,7 +201,7 @@ int main()
 
     // Model carModel(FileSystem::getPath("asset/models/obj/Lamborghini/Lamborghini.obj"));
     // 相机模型
-    //Model cameraModel(FileSystem::getPath("asset/models/obj/camera-cube/camera-cube.obj"));
+    Model cameraModel(FileSystem::getPath("asset/models/obj/camera-cube/camera-cube.obj"));
     // 赛道模型
     Model raceTrackModel(FileSystem::getPath("asset/models/obj/race-track/race-track.obj"));
     // STOP牌模型
@@ -288,6 +288,7 @@ int main()
         renderLight(shader);
 
         car.UpdateDelayYaw();
+        car.UpdateDelayPitch();
         car.UpdateDelayPosition();
 
         // 切换为相机固定时，需要每次帧修改相机状态
@@ -436,7 +437,7 @@ void setDeltaTime()
 // 相机位置更新
 // ---------------------------------
 
-//此函数暂时无效
+
 void updateFixedCamera()
 {
     // 自动逐渐复原Zoom为默认值
@@ -451,7 +452,7 @@ void updateFixedCamera()
         0.0, 0.0, 0.0, 1.0);
     glm::vec3 rotatedPosition = glm::vec3(rotateMatrix * glm::vec4(fixedCamera.getPosition(), 1.0));
 
-    camera.FixView(rotatedPosition + car.getMidValPosition(), fixedCamera.getYaw() + car.getMidValYaw());
+    camera.FixView(rotatedPosition + car.getMidValPosition(), fixedCamera.getYaw() + car.getMidValYaw(),car.getMidValPitch());
 }
 
 // ---------------------------------
@@ -636,7 +637,7 @@ void handleKeyInput(GLFWwindow* window)
     // esc退出
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-
+    /*
     if (!isCameraFixed) {
         // 相机 WSAD 前后左右; SHIFT 奔跑
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -652,13 +653,14 @@ void handleKeyInput(GLFWwindow* window)
             camera.ProcessKeyboard(LEFT, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
             camera.ProcessKeyboard(RIGHT, deltaTime);
-        /*
+        
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
             camera.ProcessKeyboard(UP, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
             camera.ProcessKeyboard(DOWN, deltaTime);
-        */
+        
     } 
+    */
     /*
     else {
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
@@ -667,31 +669,26 @@ void handleKeyInput(GLFWwindow* window)
             fixedCamera.ProcessKeyboard(CAMERA_RIGHT, deltaTime);
     }
     */
-    // 车车移动
     
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+    //锁定镜头移动
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         car.ProcessKeyboard(CAR_FORWARD, deltaTime);
-
-        // 只有车车动起来的时候才可以左右旋转
-        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-            car.ProcessKeyboard(CAR_LEFT, deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-            car.ProcessKeyboard(CAR_RIGHT, deltaTime);
-
+        /*
         if (isCameraFixed)
             camera.ZoomOut();
+        */
     }
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        car.ProcessKeyboard(CAR_LEFT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        car.ProcessKeyboard(CAR_RIGHT, deltaTime);
+
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
         car.ProcessKeyboard(CAR_BACKWARD, deltaTime);
-
-        // 同上
-        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-            car.ProcessKeyboard(CAR_LEFT, deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-            car.ProcessKeyboard(CAR_RIGHT, deltaTime);
-
+        /*
         if (isCameraFixed)
             camera.ZoomIn();
+        */
     }
     
     // 回调监听按键（一个按键只会触发一次事件）
@@ -727,7 +724,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 // 鼠标移动
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    if (!isCameraFixed) {
+    //if (!isCameraFixed) {
         if (firstMouse) {
             lastX = xpos;
             lastY = ypos;
@@ -740,8 +737,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
         lastX = xpos;
         lastY = ypos;
 
-        camera.ProcessMouseMovement(xoffset, yoffset);
-    }
+        car.ProcessMouseMovement(xoffset, yoffset);
+    //}
 }
 //鼠标按键
 void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)

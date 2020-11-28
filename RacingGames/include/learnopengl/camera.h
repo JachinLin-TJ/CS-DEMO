@@ -152,11 +152,11 @@ public:
 			Zoom = ZOOM;
 	}
 
-	void FixView(glm::vec3 position, float yaw)
+	void FixView(glm::vec3 position, float yaw,float pitch)
 	{
 		Position = position;
 		Yaw = yaw;
-		Pitch = 0.0f;
+		Pitch = pitch;
 		updateCameraVectors();
 	}
 
