@@ -29,13 +29,14 @@ void depthMapFBOInit();
 void skyboxInit();
 
 void setDeltaTime();
-void changeLightPosAsTime();
 void updateFixedCamera();
 
 // 使用“&”引用性能更好
 void renderLight(Shader& shader);
+
 void renderCarAndCamera(Model& carModel, Model& cameraModel, Shader& shader);
-void  renderGunAndCamera(Model& carModel, Model& cameraModel, Shader& shader);
+void renderGunAndCamera(Model& carModel, Model& cameraModel, Shader& shader);
+
 void renderCar(Model& model, glm::mat4 modelMatrix, Shader& shader);
 void renderCamera(Model& model, glm::mat4 modelMatrix, Shader& shader);
 void renderStopSign(Model& model, Shader& shader);
@@ -264,8 +265,11 @@ int main()
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
         // 使用深度shader渲染生成场景
         glClear(GL_DEPTH_BUFFER_BIT);
+
         renderCarAndCamera(rifleModel, cameraModel, depthShader);
         // renderCarAndCamera(carModel, cameraModel, depthShader);
+
+
         renderRaceTrack(raceTrackModel, depthShader);
         renderStopSign(stopSignModel, depthShader);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -292,7 +296,6 @@ int main()
         }
 
         // 使用shader渲染car和Camera（层级模型）
-
 
         renderGunAndCamera(rifleModel, cameraModel, shader);
     
@@ -466,6 +469,7 @@ void renderLight(Shader& shader)
     glBindTexture(GL_TEXTURE_2D, depthMap);
 }
 
+
 void renderCarAndCamera(Model& carModel, Model& cameraModel, Shader& shader)
 {
     // 视图转换
@@ -489,9 +493,8 @@ void renderCarAndCamera(Model& carModel, Model& cameraModel, Shader& shader)
     // 由于mat4作函数参数时为值传递，故不需要备份modelMatrix
 
     // 渲染相机
-    renderCamera(cameraModel, modelMatrix, shader);
+    //renderCamera(cameraModel, modelMatrix, shader);
 }
-
 
 void renderGunAndCamera(Model& gunModel, Model& cameraModel, Shader& shader)
 {
