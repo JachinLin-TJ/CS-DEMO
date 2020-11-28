@@ -35,9 +35,12 @@ void updateFixedCamera();
 // 使用“&”引用性能更好
 void renderLight(Shader& shader);
 void renderCarAndCamera(Model& carModel, Model& cameraModel, Shader& shader);
+void  renderGunAndCamera(Model& carModel, Model& cameraModel, Shader& shader);
 void renderCar(Model& model, glm::mat4 modelMatrix, Shader& shader);
 void renderCamera(Model& model, glm::mat4 modelMatrix, Shader& shader);
 void renderStopSign(Model& model, Shader& shader);
+void renderGun(Model& model, glm::mat4 modelMatrix, Shader& shader);
+void renderGun(Model& model, Shader& shader);
 void renderRaceTrack(Model& model, Shader& shader);
 void renderSkyBox(Shader& shader);
 
@@ -55,8 +58,8 @@ unsigned int loadCubemap(vector<std::string> faces);
 // ------------------------------------------
 
 // 窗口尺寸
-const unsigned int SCR_WIDTH = 1280;
-const unsigned int SCR_HEIGHT = 720;
+const unsigned int SCR_WIDTH = 1920;
+const unsigned int SCR_HEIGHT = 1080;
 
 // 渲染阴影时的窗口分辨率（会影响阴影的锯齿边情况）
 const unsigned int SHADOW_WIDTH = 1024 * 10;
@@ -193,13 +196,21 @@ int main()
     // ------------------------------
 
     // 汽车模型
-    Model carModel(FileSystem::getPath("asset/models/obj/Lamborghini/Lamborghini.obj"));
+    // Model carModel(FileSystem::getPath("asset/models/obj/ACPGun/Handgun_obj.obj"));
+
+    // Model carModel(FileSystem::getPath("asset/models/obj/Lamborghini/Lamborghini.obj"));
     // 相机模型
     Model cameraModel(FileSystem::getPath("asset/models/obj/camera-cube/camera-cube.obj"));
     // 赛道模型
     Model raceTrackModel(FileSystem::getPath("asset/models/obj/race-track/race-track.obj"));
     // STOP牌模型
     Model stopSignModel(FileSystem::getPath("asset/models/obj/StopSign/StopSign.obj"));
+
+    // STOP牌模型
+    // Model anotherstopSignModel(FileSystem::getPath("asset/models/obj/ACPGun/Handgun_obj.obj"));
+    // Model anotherstopSignModel(FileSystem::getPath("asset/models/obj/DragonSniper/AWP_Dragon_Lore.obj"));
+    Model rifleModel(FileSystem::getPath("asset/models/obj/AK47/AK47.obj"));
+
 
     // ---------------------------------
     // shader 纹理配置
@@ -253,7 +264,8 @@ int main()
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
         // 使用深度shader渲染生成场景
         glClear(GL_DEPTH_BUFFER_BIT);
-        renderCarAndCamera(carModel, cameraModel, depthShader);
+        renderCarAndCamera(rifleModel, cameraModel, depthShader);
+        // renderCarAndCamera(carModel, cameraModel, depthShader);
         renderRaceTrack(raceTrackModel, depthShader);
         renderStopSign(stopSignModel, depthShader);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -280,11 +292,14 @@ int main()
         }
 
         // 使用shader渲染car和Camera（层级模型）
-        renderCarAndCamera(carModel, cameraModel, shader);
 
+
+        renderGunAndCamera(rifleModel, cameraModel, shader);
+    
         // 渲染Stop牌
         renderStopSign(stopSignModel, shader);
-
+        // 渲染Stop牌
+       // renderGun(rifleModel, shader);
         // 渲染赛道
         renderRaceTrack(raceTrackModel, shader);
 
@@ -477,6 +492,33 @@ void renderCarAndCamera(Model& carModel, Model& cameraModel, Shader& shader)
     renderCamera(cameraModel, modelMatrix, shader);
 }
 
+
+void renderGunAndCamera(Model& gunModel, Model& cameraModel, Shader& shader)
+{
+    // 视图转换
+    glm::mat4 viewMatrix = camera.GetViewMatrix();
+    shader.setMat4("view", viewMatrix);
+    // 投影转换
+    glm::mat4 projMatrix = camera.GetProjMatrix((float)SCR_WIDTH / (float)SCR_HEIGHT);
+    shader.setMat4("projection", projMatrix);
+
+    // -------
+    // 层级建模
+
+    // 模型转换
+    glm::mat4 modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::translate(modelMatrix, car.getMidValPosition());
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(car.getDelayYaw() / 2), WORLD_UP);
+
+    // 渲染汽车
+    renderGun(gunModel, modelMatrix, shader);
+
+    // 由于mat4作函数参数时为值传递，故不需要备份modelMatrix
+
+    // 渲染相机
+    renderCamera(cameraModel, modelMatrix, shader);
+}
+
 // 渲染汽车
 void renderCar(Model& model, glm::mat4 modelMatrix, Shader& shader)
 {
@@ -520,7 +562,36 @@ void renderStopSign(Model& model, Shader& shader)
 
     model.Draw(shader);
 }
+void renderGun(Model& model, glm::mat4 modelMatrix, Shader& shader)
+{
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(car.getYaw() - car.getDelayYaw() / 2), WORLD_UP);
+    
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.5f, 1.5f, 3.5f));
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(-180.0f), WORLD_UP);
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.01f, 0.01f, 0.01f));
 
+    // 应用变换矩阵
+    shader.setMat4("model", modelMatrix);
+
+    model.Draw(shader);
+}
+void renderGun(Model& model, Shader& shader)
+{
+    // 视图转换
+    glm::mat4 viewMatrix = camera.GetViewMatrix();
+    shader.setMat4("view", viewMatrix);
+    // 模型转换
+    glm::mat4 modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(2.0f, 1.5f, -4.0f));
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(-180.0f), WORLD_UP);
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.01f, 0.01f, 0.01f));
+    shader.setMat4("model", modelMatrix);
+    // 投影转换
+    glm::mat4 projMatrix = camera.GetProjMatrix((float)SCR_WIDTH / (float)SCR_HEIGHT);
+    shader.setMat4("projection", projMatrix);
+
+    model.Draw(shader);
+}
 void renderRaceTrack(Model& model, Shader& shader)
 {
     // 视图转换
@@ -594,7 +665,7 @@ void handleKeyInput(GLFWwindow* window)
     }
     */
     // 车车移动
-    /*
+    
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
         car.ProcessKeyboard(CAR_FORWARD, deltaTime);
 
@@ -619,7 +690,7 @@ void handleKeyInput(GLFWwindow* window)
         if (isCameraFixed)
             camera.ZoomIn();
     }
-    */
+    
     // 回调监听按键（一个按键只会触发一次事件）
     glfwSetKeyCallback(window, key_callback);
 }
