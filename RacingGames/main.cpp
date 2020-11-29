@@ -18,9 +18,9 @@
 
 #pragma comment(lib, "glfw3.lib")
 #pragma comment(lib, "assimp.lib")
-
+#define DEBUG_MODE
 // ------------------------------------------
-// º¯ÊıÉùÃ÷
+// å‡½æ•°å£°æ˜
 // ------------------------------------------
 
 GLFWwindow* windowInit();
@@ -29,76 +29,81 @@ void depthMapFBOInit();
 void skyboxInit();
 
 void setDeltaTime();
-void changeLightPosAsTime();
 void updateFixedCamera();
 
-// Ê¹ÓÃ¡°&¡±ÒıÓÃĞÔÄÜ¸üºÃ
+// ä½¿ç”¨â€œ&â€å¼•ç”¨æ€§èƒ½æ›´å¥½
 void renderLight(Shader& shader);
+
 void renderCarAndCamera(Model& carModel, Model& cameraModel, Shader& shader);
+void renderGunAndCamera(Model& carModel, Model& cameraModel, Shader& shader);
+
 void renderCar(Model& model, glm::mat4 modelMatrix, Shader& shader);
 void renderCamera(Model& model, glm::mat4 modelMatrix, Shader& shader);
-void renderStopSign(Model& model, Shader& shader);
+void renderGun(Model& model, glm::mat4 modelMatrix, Shader& shader);
+void renderGun(Model& model, Shader& shader);
 void renderRaceTrack(Model& model, Shader& shader);
 void renderSkyBox(Shader& shader);
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void mouseButton_callback(GLFWwindow* window, int button, int action, int mods);
+
 void handleKeyInput(GLFWwindow* window);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 unsigned int loadCubemap(vector<std::string> faces);
 
 // ------------------------------------------
-// È«¾Ö±äÁ¿
+// å…¨å±€å˜é‡
 // ------------------------------------------
 
-// ´°¿Ú³ß´ç
-const unsigned int SCR_WIDTH = 1280;
-const unsigned int SCR_HEIGHT = 720;
+// çª—å£å°ºå¯¸
+const unsigned int SCR_WIDTH = 1920;
+const unsigned int SCR_HEIGHT = 1080;
 
-// äÖÈ¾ÒõÓ°Ê±µÄ´°¿Ú·Ö±æÂÊ£¨»áÓ°ÏìÒõÓ°µÄ¾â³İ±ßÇé¿ö£©
+// æ¸²æŸ“é˜´å½±æ—¶çš„çª—å£åˆ†è¾¨ç‡ï¼ˆä¼šå½±å“é˜´å½±çš„é”¯é½¿è¾¹æƒ…å†µï¼‰
 const unsigned int SHADOW_WIDTH = 1024 * 10;
 const unsigned int SHADOW_HEIGHT = 1024 * 10;
 
-// ÊÇ·ñÎªÏß¿òÍ¼Ä£Ê½
+// æ˜¯å¦ä¸ºçº¿æ¡†å›¾æ¨¡å¼
 bool isPolygonMode = false;
 
-// ÊÀ½ç×ø±êÏµYÖáµ¥Î»ÏòÁ¿
+// ä¸–ç•Œåæ ‡ç³»å•ä½å‘é‡
 glm::vec3 WORLD_UP(0.0f, 1.0f, 0.0f);
+glm::vec3 WORLD_X(1.0f, 0.0f, 0.0f);
 
-// Æû³µ
+// æ±½è½¦
 Car car(glm::vec3(0.0f, 0.05f, 0.0f));
 
-// Ïà»ú
+// ç›¸æœº
 glm::vec3 cameraPos(0.0f, 2.0f, 5.0f);
 Camera camera(cameraPos);
 FixedCamera fixedCamera(cameraPos);
-bool isCameraFixed = false;
 
-// ¹âÕÕÏà¹ØÊôĞÔ
+
+// å…‰ç…§ç›¸å…³å±æ€§
 glm::vec3 lightPos(-1.0f, 1.0f, -1.0f);
 glm::vec3 lightDirection = glm::normalize(lightPos);
 glm::mat4 lightSpaceMatrix;
 
-// Éî¶ÈMapµÄID
+// æ·±åº¦Mapçš„ID
 unsigned int depthMap;
 unsigned int depthMapFBO;
 
-// ½«Êó±êÉèÖÃÔÚÆÁÄ»ÖĞĞÄ
+// å°†é¼ æ ‡è®¾ç½®åœ¨å±å¹•ä¸­å¿ƒ
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 
-// timing ÓÃÀ´Æ½ºâ²»Í¬µçÄÔäÖÈ¾Ë®Æ½Ëù²úÉúµÄËÙ¶È±ä»¯
+// timing ç”¨æ¥å¹³è¡¡ä¸åŒç”µè„‘æ¸²æŸ“æ°´å¹³æ‰€äº§ç”Ÿçš„é€Ÿåº¦å˜åŒ–
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-// Ìì¿ÕºĞ
+// å¤©ç©ºç›’
 unsigned int cubemapTexture;
 unsigned int skyboxVAO, skyboxVBO;
 
-// Ìì¿ÕºĞ¶¥µãÊı¾İ
+// å¤©ç©ºç›’é¡¶ç‚¹æ•°æ®
 const float skyboxVertices[] = {
     // positions
     -1.0f, 1.0f, -1.0f,
@@ -144,7 +149,7 @@ const float skyboxVertices[] = {
     1.0f, -1.0f, 1.0f
 };
 
-// Ìì¿ÕºĞµÄÃæÊı¾İ
+// å¤©ç©ºç›’çš„é¢æ•°æ®
 const vector<std::string> faces{
     FileSystem::getPath("asset/textures/skybox/right.tga"),
     FileSystem::getPath("asset/textures/skybox/left.tga"),
@@ -155,178 +160,176 @@ const vector<std::string> faces{
 };
 
 // ------------------------------------------
-// mainº¯Êı
+// mainå‡½æ•°
 // ------------------------------------------
 
 int main()
 {
     // ------------------------------
-    // ³õÊ¼»¯
+    // åˆå§‹åŒ–
     // ------------------------------
 
-    // ´°¿Ú³õÊ¼»¯
+    // çª—å£åˆå§‹åŒ–
     GLFWwindow* window = windowInit();
-    // OpenGL³õÊ¼»¯
+    // OpenGLåˆå§‹åŒ–
     bool isInit = init();
     if (window == NULL || !isInit) {
         return -1;
     }
-    // Éî¶ÈMapµÄFBOÅäÖÃ
+    // æ·±åº¦Mapçš„FBOé…ç½®
     depthMapFBOInit();
-    // Ìì¿ÕºĞµÄÅäÖÃ
+    // å¤©ç©ºç›’çš„é…ç½®
     skyboxInit();
 
     // ------------------------------
-    // ¹¹½¨ºÍ±àÒë×ÅÉ«Æ÷
+    // æ„å»ºå’Œç¼–è¯‘ç€è‰²å™¨
     // ------------------------------
 
-    // ÎªËùÓĞÎïÌåÌí¼Ó¹âÕÕºÍÒõÓ°µÄshader
+    // ä¸ºæ‰€æœ‰ç‰©ä½“æ·»åŠ å…‰ç…§å’Œé˜´å½±çš„shader
     Shader shader("shader/light_and_shadow.vs", "shader/light_and_shadow.fs");
-    // ´ÓÌ«ÑôÆ½ĞĞ¹â½Ç¶ÈÉú³ÉÉî¶ÈĞÅÏ¢µÄshader
+    // ä»å¤ªé˜³å¹³è¡Œå…‰è§’åº¦ç”Ÿæˆæ·±åº¦ä¿¡æ¯çš„shader
     Shader depthShader("shader/shadow_mapping_depth.vs", "shader/shadow_mapping_depth.fs");
-    // Ìì¿ÕºĞshader
+    // å¤©ç©ºç›’shader
     Shader skyboxShader("shader/skybox.vs", "shader/skybox.fs");
 
     // ------------------------------
-    // Ä£ĞÍ¼ÓÔØ
+    // æ¨¡å‹åŠ è½½
     // ------------------------------
 
-    // Æû³µÄ£ĞÍ
-    Model carModel(FileSystem::getPath("asset/models/obj/Lamborghini/Lamborghini.obj"));
-    // Ïà»úÄ£ĞÍ
+    // ç›¸æœºæ¨¡å‹
     Model cameraModel(FileSystem::getPath("asset/models/obj/camera-cube/camera-cube.obj"));
-    // ÈüµÀÄ£ĞÍ
-	//Model raceTrackModel(FileSystem::getPath("asset/models/obj/race-track/race-track.obj"));
+    // èµ›é“æ¨¡å‹
+
     Model raceTrackModel(FileSystem::getPath("asset/models/obj/race-track/test.obj"));
-    // STOPÅÆÄ£ĞÍ
     Model stopSignModel(FileSystem::getPath("asset/models/obj/StopSign/Pirate.obj"));
+
+    // æªæ¢°æ¨¡å‹
+    // Model another_rifleModel(FileSystem::getPath("asset/models/obj/ACPGun/Handgun_obj.obj"));
+    // Model another_rifleModel(FileSystem::getPath("asset/models/obj/DragonSniper/AWP_Dragon_Lore.obj"));
+    Model rifleModel(FileSystem::getPath("asset/models/obj/AK47/AK47.obj"));
+
+
     // ---------------------------------
-    // shader ÎÆÀíÅäÖÃ
+    // shader çº¹ç†é…ç½®
     // ---------------------------------
 
     shader.use();
     shader.setInt("diffuseTexture", 0);
-    shader.setInt("shadowMap", 15); // ÕâÀïµÄ15ÊÇÖ¸"GL_TEXTURE15"£¬ĞèÒªÓëºóÃæµÄ¶ÔÓ¦
+    shader.setInt("shadowMap", 15); // è¿™é‡Œçš„15æ˜¯æŒ‡"GL_TEXTURE15"ï¼Œéœ€è¦ä¸åé¢çš„å¯¹åº”
 
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
 
     // ---------------------------------
-    // Ñ­»·äÖÈ¾
+    // å¾ªç¯æ¸²æŸ“
     // ---------------------------------
 
     while (!glfwWindowShouldClose(window)) {
-        // ¼ÆËãÒ»Ö¡µÄÊ±¼ä³¤¶ÈÒÔ±ãÓÚÊ¹Ö¡»æÖÆËÙ¶È¾ùÔÈ
+        // è®¡ç®—ä¸€å¸§çš„æ—¶é—´é•¿åº¦ä»¥ä¾¿äºä½¿å¸§ç»˜åˆ¶é€Ÿåº¦å‡åŒ€
         setDeltaTime();
 
-        // Ëæ×ÅÊ±¼ä¸Ä±ä¹âÔ´Î»ÖÃ
-        // changeLightPosAsTime();
-
-        // ¼àÌı°´¼ü
+        // ç›‘å¬æŒ‰é”®
         handleKeyInput(window);
 
-        // äÖÈ¾±³¾°
+        // æ¸²æŸ“èƒŒæ™¯
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // ---------------------------------
-        // äÖÈ¾»ñµÃ³¡¾°µÄÉî¶ÈĞÅÏ¢
+        // æ¸²æŸ“è·å¾—åœºæ™¯çš„æ·±åº¦ä¿¡æ¯
         // ---------------------------------
 
-        // ¶¨Òå¹âÔ´ÊÓ¼ûÌå£¬¼´ÒõÓ°Éú³É·¶Î§µÄÕı½»Í¶Ó°¾ØÕó
+        // å®šä¹‰å…‰æºè§†è§ä½“ï¼Œå³é˜´å½±ç”ŸæˆèŒƒå›´çš„æ­£äº¤æŠ•å½±çŸ©é˜µ
         glm::mat4 lightProjection = glm::ortho(
             -200.0f, 200.0f,
             -200.0f, 200.0f,
             -200.0f, 200.0f);
-        // TODO lightPos¸úËæÏà»úÎ»ÖÃ½øĞĞÒÆ¶¯£¬Ê¹Ïà»úÖÜÎ§µÄµØ·½×Ü»áÉú³ÉÓ°×Ó
+        // TODO lightPosè·Ÿéšç›¸æœºä½ç½®è¿›è¡Œç§»åŠ¨ï¼Œä½¿ç›¸æœºå‘¨å›´çš„åœ°æ–¹æ€»ä¼šç”Ÿæˆå½±å­
         glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f), WORLD_UP);
         lightSpaceMatrix = lightProjection * lightView;
 
-        // ´Ó¹âÔ´½Ç¶ÈäÖÈ¾Õû¸ö³¡¾°
+        // ä»å…‰æºè§’åº¦æ¸²æŸ“æ•´ä¸ªåœºæ™¯
         depthShader.use();
         depthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
-        // ¸Ä±äÊÓ¿Ú´óĞ¡ÒÔ±ãÓÚ½øĞĞÉî¶ÈµÄäÖÈ¾
+        // æ”¹å˜è§†å£å¤§å°ä»¥ä¾¿äºè¿›è¡Œæ·±åº¦çš„æ¸²æŸ“
         glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-        // Ê¹ÓÃÉî¶ÈshaderäÖÈ¾Éú³É³¡¾°
+        // ä½¿ç”¨æ·±åº¦shaderæ¸²æŸ“ç”Ÿæˆåœºæ™¯
         glClear(GL_DEPTH_BUFFER_BIT);
-        renderCarAndCamera(carModel, cameraModel, depthShader);
+
+        renderGunAndCamera(rifleModel, cameraModel, depthShader);
         renderRaceTrack(raceTrackModel, depthShader);
-        renderStopSign(stopSignModel, depthShader);
+        
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        // ¸´Ô­ÊÓ¿Ú
+        // å¤åŸè§†å£
         glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // ---------------------------------
-        // Ä£ĞÍäÖÈ¾
+        // æ¨¡å‹æ¸²æŸ“
         // ---------------------------------
 
         shader.use();
 
-        // ÉèÖÃ¹âÕÕÏà¹ØÊôĞÔ
+        // è®¾ç½®å…‰ç…§ç›¸å…³å±æ€§
         renderLight(shader);
-
+        
         car.UpdateDelayYaw();
+        car.UpdateDelayPitch();
         car.UpdateDelayPosition();
 
-        // ÇĞ»»ÎªÏà»ú¹Ì¶¨Ê±£¬ĞèÒªÃ¿´ÎÖ¡ĞŞ¸ÄÏà»ú×´Ì¬
-        if (isCameraFixed) {
-            updateFixedCamera();
-        }
 
-        // Ê¹ÓÃshaderäÖÈ¾carºÍCamera£¨²ã¼¶Ä£ĞÍ£©
-        renderCarAndCamera(carModel, cameraModel, shader);
+        updateFixedCamera();
 
-        // äÖÈ¾StopÅÆ
-        renderStopSign(stopSignModel, shader);
-
-        // äÖÈ¾ÈüµÀ
+        // ä½¿ç”¨shaderæ¸²æŸ“Gunå’ŒCameraï¼ˆå±‚çº§æ¨¡å‹ï¼‰
+        renderGunAndCamera(rifleModel, cameraModel, shader);
+    
+        // æ¸²æŸ“èµ›é“
         renderRaceTrack(raceTrackModel, shader);
 
         // --------------
-        // ×îºóÔÙäÖÈ¾Ìì¿ÕºĞ
+        // æœ€åå†æ¸²æŸ“å¤©ç©ºç›’
 
-        // ¸Ä±äÉî¶È²âÊÔ£¬Ê¹Éî¶ÈµÈÓÚ1.0Ê±ÎªÎŞÇîÔ¶
+        // æ”¹å˜æ·±åº¦æµ‹è¯•ï¼Œä½¿æ·±åº¦ç­‰äº1.0æ—¶ä¸ºæ— ç©·è¿œ
         glDepthFunc(GL_LEQUAL);
         skyboxShader.use();
         renderSkyBox(skyboxShader);
-        // ¸´Ô­Éî¶È²âÊÔ
+        // å¤åŸæ·±åº¦æµ‹è¯•
         glDepthFunc(GL_LESS);
 
-        // ½»»»»º³åÇøºÍµ÷²éIOÊÂ¼ş£¨°´ÏÂµÄ°´¼ü,Êó±êÒÆ¶¯µÈ£©
+        // äº¤æ¢ç¼“å†²åŒºå’Œè°ƒæŸ¥IOäº‹ä»¶ï¼ˆæŒ‰ä¸‹çš„æŒ‰é”®,é¼ æ ‡ç§»åŠ¨ç­‰ï¼‰
         glfwSwapBuffers(window);
 
-        // ÂÖÑ¯ÊÂ¼ş
+        // è½®è¯¢äº‹ä»¶
         glfwPollEvents();
     }
 
-    // ¹Ø±Õglfw
+    // å…³é—­glfw
     glfwTerminate();
     return 0;
 }
 
 // ------------------------------------------
-// ÆäËûº¯Êı
+// å…¶ä»–å‡½æ•°
 // ------------------------------------------
 
 
 // ---------------------------------
-// ³õÊ¼»¯
+// åˆå§‹åŒ–
 // ---------------------------------
 
 GLFWwindow* windowInit()
 {
-    // ³õÊ¼»¯ÅäÖÃ
+    // åˆå§‹åŒ–é…ç½®
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    // ´´½¨´°¿Ú
+    // åˆ›å»ºçª—å£
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, u8"RacingGamesDemo | Ceynri", NULL, NULL);
     if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -337,9 +340,10 @@ GLFWwindow* windowInit()
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetScrollCallback(window, scroll_callback);
+    glfwSetMouseButtonCallback(window, mouseButton_callback);
+    
 
-    // ÁîGLFW²¶×½ÓÃ»§µÄÊó±ê
+    // ä»¤GLFWæ•æ‰ç”¨æˆ·çš„é¼ æ ‡
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     return window;
@@ -347,24 +351,24 @@ GLFWwindow* windowInit()
 
 bool init()
 {
-    // ¼ÓÔØËùÓĞOpenGLº¯ÊıÖ¸Õë
+    // åŠ è½½æ‰€æœ‰OpenGLå‡½æ•°æŒ‡é’ˆ
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
         system("pause");
         return false;
     }
 
-    // ÅäÖÃÈ«¾ÖopenGL×´Ì¬
+    // é…ç½®å…¨å±€openGLçŠ¶æ€
     glEnable(GL_DEPTH_TEST);
 
     return true;
 }
 
-// Éî¶ÈÍ¼ÅäÖÃ
+// æ·±åº¦å›¾é…ç½®
 void depthMapFBOInit()
 {
     glGenFramebuffers(1, &depthMapFBO);
-    // ´´½¨Éî¶ÈÎÆÀí
+    // åˆ›å»ºæ·±åº¦çº¹ç†
     glGenTextures(1, &depthMap);
     glBindTexture(GL_TEXTURE_2D, depthMap);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
@@ -374,7 +378,7 @@ void depthMapFBOInit()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-    // °ÑÉú³ÉµÄÉî¶ÈÎÆÀí×÷ÎªÖ¡»º³åµÄÉî¶È»º³å
+    // æŠŠç”Ÿæˆçš„æ·±åº¦çº¹ç†ä½œä¸ºå¸§ç¼“å†²çš„æ·±åº¦ç¼“å†²
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
     glDrawBuffer(GL_NONE);
@@ -382,7 +386,7 @@ void depthMapFBOInit()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-// Ìì¿ÕºĞÅäÖÃ
+// å¤©ç©ºç›’é…ç½®
 void skyboxInit()
 {
     // skybox VAO
@@ -394,15 +398,15 @@ void skyboxInit()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-    // ÎÆÀí¼ÓÔØ
+    // çº¹ç†åŠ è½½
     cubemapTexture = loadCubemap(faces);
 }
 
 // ---------------------------------
-// Ê±¼äÏà¹Øº¯Êı
+// æ—¶é—´ç›¸å…³å‡½æ•°
 // ---------------------------------
 
-// ¼ÆËãÒ»Ö¡µÄÊ±¼ä³¤¶È
+// è®¡ç®—ä¸€å¸§çš„æ—¶é—´é•¿åº¦
 void setDeltaTime()
 {
     float currentFrame = glfwGetTime();
@@ -410,25 +414,18 @@ void setDeltaTime()
     lastFrame = currentFrame;
 }
 
-void changeLightPosAsTime()
-{
-    float freq = 0.1;
-    lightPos.x = 1.0 + cos(glfwGetTime() * freq) * -0.5f;
-    lightPos.z = -1.0 + sin(glfwGetTime() * freq) * 0.5f;
-    lightPos.y = 1.0 + cos(glfwGetTime() * freq) * 0.5f;
-    lightDirection = glm::normalize(lightPos);
-}
+
 
 // ---------------------------------
-// Ïà»úÎ»ÖÃ¸üĞÂ
+// ç›¸æœºä½ç½®æ›´æ–°
 // ---------------------------------
+
 
 void updateFixedCamera()
 {
-    // ×Ô¶¯Öğ½¥¸´Ô­ZoomÎªÄ¬ÈÏÖµ
+    // è‡ªåŠ¨é€æ¸å¤åŸZoomä¸ºé»˜è®¤å€¼
     camera.ZoomRecover();
-
-    // ´¦ÀíÏà»úÏà¶ÔÓÚ³µ×ø±êÏµÏÂµÄÏòÁ¿×ø±ê×ª»»ÎªÊÀ½ç×ø±êÏµÏÂµÄÏòÁ¿
+    // å¤„ç†ç›¸æœºç›¸å¯¹äºè½¦åæ ‡ç³»ä¸‹çš„å‘é‡åæ ‡è½¬æ¢ä¸ºä¸–ç•Œåæ ‡ç³»ä¸‹çš„å‘é‡
     float angle = glm::radians(-car.getMidValYaw());
     glm::mat4 rotateMatrix(
         cos(angle), 0.0, sin(angle), 0.0,
@@ -437,14 +434,14 @@ void updateFixedCamera()
         0.0, 0.0, 0.0, 1.0);
     glm::vec3 rotatedPosition = glm::vec3(rotateMatrix * glm::vec4(fixedCamera.getPosition(), 1.0));
 
-    camera.FixView(rotatedPosition + car.getMidValPosition(), fixedCamera.getYaw() + car.getMidValYaw());
+    camera.FixView(rotatedPosition + car.getMidValPosition(), fixedCamera.getYaw() + car.getMidValYaw(),car.getMidValPitch());
 }
 
 // ---------------------------------
-// äÖÈ¾º¯Êı
+// æ¸²æŸ“å‡½æ•°
 // ---------------------------------
 
-// ÉèÖÃ¹âÕÕÏà¹ØÊôĞÔ
+// è®¾ç½®å…‰ç…§ç›¸å…³å±æ€§
 void renderLight(Shader& shader)
 {
     shader.setVec3("viewPos", camera.Position);
@@ -455,42 +452,69 @@ void renderLight(Shader& shader)
     glBindTexture(GL_TEXTURE_2D, depthMap);
 }
 
+
 void renderCarAndCamera(Model& carModel, Model& cameraModel, Shader& shader)
 {
-    // ÊÓÍ¼×ª»»
+    // è§†å›¾è½¬æ¢
     glm::mat4 viewMatrix = camera.GetViewMatrix();
     shader.setMat4("view", viewMatrix);
-    // Í¶Ó°×ª»»
+    // æŠ•å½±è½¬æ¢
     glm::mat4 projMatrix = camera.GetProjMatrix((float)SCR_WIDTH / (float)SCR_HEIGHT);
     shader.setMat4("projection", projMatrix);
 
     // -------
-    // ²ã¼¶½¨Ä£
+    // å±‚çº§å»ºæ¨¡
 
-    // Ä£ĞÍ×ª»»
+    // æ¨¡å‹è½¬æ¢
     glm::mat4 modelMatrix = glm::mat4(1.0f);
     modelMatrix = glm::translate(modelMatrix, car.getMidValPosition());
     modelMatrix = glm::rotate(modelMatrix, glm::radians(car.getDelayYaw() / 2), WORLD_UP);
 
-    // äÖÈ¾Æû³µ
+    // æ¸²æŸ“æ±½è½¦
     renderCar(carModel, modelMatrix, shader);
 
-    // ÓÉÓÚmat4×÷º¯Êı²ÎÊıÊ±ÎªÖµ´«µİ£¬¹Ê²»ĞèÒª±¸·İmodelMatrix
+    // ç”±äºmat4ä½œå‡½æ•°å‚æ•°æ—¶ä¸ºå€¼ä¼ é€’ï¼Œæ•…ä¸éœ€è¦å¤‡ä»½modelMatrix
 
-    // äÖÈ¾Ïà»ú
+    // æ¸²æŸ“ç›¸æœº
+    //renderCamera(cameraModel, modelMatrix, shader);
+}
+
+void renderGunAndCamera(Model& gunModel, Model& cameraModel, Shader& shader)
+{
+    // è§†å›¾è½¬æ¢
+    glm::mat4 viewMatrix = camera.GetViewMatrix();
+    shader.setMat4("view", viewMatrix);
+    // æŠ•å½±è½¬æ¢
+    glm::mat4 projMatrix = camera.GetProjMatrix((float)SCR_WIDTH / (float)SCR_HEIGHT);
+    shader.setMat4("projection", projMatrix);
+
+    // -------
+    // å±‚çº§å»ºæ¨¡
+
+    // æ¨¡å‹è½¬æ¢
+    glm::mat4 modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::translate(modelMatrix, car.getMidValPosition());
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(car.getDelayYaw() / 2), WORLD_UP);
+
+    // æ¸²æŸ“æ±½è½¦
+    renderGun(gunModel, modelMatrix, shader);
+
+    // ç”±äºmat4ä½œå‡½æ•°å‚æ•°æ—¶ä¸ºå€¼ä¼ é€’ï¼Œæ•…ä¸éœ€è¦å¤‡ä»½modelMatrix
+
+    // æ¸²æŸ“ç›¸æœº
     renderCamera(cameraModel, modelMatrix, shader);
 }
 
-// äÖÈ¾Æû³µ
+// æ¸²æŸ“æ±½è½¦
 void renderCar(Model& model, glm::mat4 modelMatrix, Shader& shader)
 {
     modelMatrix = glm::rotate(modelMatrix, glm::radians(car.getYaw() - car.getDelayYaw() / 2), WORLD_UP);
-    // µÖÏûÄ£ĞÍÔ­±¾×Ô´øµÄĞı×ª
+    // æŠµæ¶ˆæ¨¡å‹åŸæœ¬è‡ªå¸¦çš„æ—‹è½¬
     modelMatrix = glm::rotate(modelMatrix, glm::radians(-90.0f), WORLD_UP);
-    // µ÷ÕûÄ£ĞÍ´óĞ¡
+    // è°ƒæ•´æ¨¡å‹å¤§å°
     modelMatrix = glm::scale(modelMatrix, glm::vec3(0.004f, 0.004f, 0.004f));
 
-    // Ó¦ÓÃ±ä»»¾ØÕó
+    // åº”ç”¨å˜æ¢çŸ©é˜µ
     shader.setMat4("model", modelMatrix);
 
     model.Draw(shader);
@@ -502,38 +526,66 @@ void renderCamera(Model& model, glm::mat4 modelMatrix, Shader& shader)
     modelMatrix = glm::translate(modelMatrix, cameraPos);
     modelMatrix = glm::scale(modelMatrix, glm::vec3(0.01f, 0.01f, 0.01f));
 
-    // Ó¦ÓÃ±ä»»¾ØÕó
+    // åº”ç”¨å˜æ¢çŸ©é˜µ
     shader.setMat4("model", modelMatrix);
 
     model.Draw(shader);
 }
 
-void renderStopSign(Model& model, Shader& shader)
+
+
+void GunRotate(glm::mat4 & modelMatrix, glm::vec3  &Point, float degree)
 {
-    // ÊÓÍ¼×ª»»
+    modelMatrix = glm::translate(modelMatrix, Point);
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(degree), WORLD_X);
+    modelMatrix = glm::translate(modelMatrix, -Point);
+
+}
+void renderGun(Model& model, glm::mat4 modelMatrix, Shader& shader)
+{
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(car.getYaw() - car.getDelayYaw() / 2), WORLD_UP);
+    GunRotate(modelMatrix, glm::vec3(0.0f, 0.0f, 4.0f), (car.getPitch() - car.getDelayPitch() / 2));
+
+    // modelMatrix = glm::rotate(modelMatrix, glm::radians(-(car.getPitch() - car.getDelayPitch() / 2)), WORLD_X);
+
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.5f, 1.5f, 4.0f));
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(-180.0f), WORLD_UP);
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.01f, 0.01f, 0.01f));
+
+    // GunRotate(modelMatrix, glm::vec3(0.0f, 0.0f, 10.0f), -(car.getPitch() - car.getDelayPitch() / 2));
+    // 
+    // åº”ç”¨å˜æ¢çŸ©é˜µ
+    shader.setMat4("model", modelMatrix);
+
+    model.Draw(shader);
+}
+
+void renderGun(Model& model, Shader& shader)
+{
+    // è§†å›¾è½¬æ¢
     glm::mat4 viewMatrix = camera.GetViewMatrix();
     shader.setMat4("view", viewMatrix);
-    // Ä£ĞÍ×ª»»
+    // æ¨¡å‹è½¬æ¢
     glm::mat4 modelMatrix = glm::mat4(1.0f);
-    modelMatrix = glm::translate(modelMatrix, glm::vec3(3.0f, 1.5f, -4.0f));
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(-120.0f), WORLD_UP);
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(2.0f, 1.5f, -7.0f));
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(-180.0f), WORLD_UP);
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.01f, 0.01f, 0.01f));
     shader.setMat4("model", modelMatrix);
-    // Í¶Ó°×ª»»
+    // æŠ•å½±è½¬æ¢
     glm::mat4 projMatrix = camera.GetProjMatrix((float)SCR_WIDTH / (float)SCR_HEIGHT);
     shader.setMat4("projection", projMatrix);
 
     model.Draw(shader);
 }
-
 void renderRaceTrack(Model& model, Shader& shader)
 {
-    // ÊÓÍ¼×ª»»
+    // è§†å›¾è½¬æ¢
     glm::mat4 viewMatrix = camera.GetViewMatrix();
     shader.setMat4("view", viewMatrix);
-    // Ä£ĞÍ×ª»»
+    // æ¨¡å‹è½¬æ¢
     glm::mat4 modelMatrix = glm::mat4(1.0f);
     shader.setMat4("model", modelMatrix);
-    // Í¶Ó°×ª»»
+    // æŠ•å½±è½¬æ¢
     glm::mat4 projMatrix = camera.GetProjMatrix((float)SCR_WIDTH / (float)SCR_HEIGHT);
     shader.setMat4("projection", projMatrix);
 
@@ -542,9 +594,9 @@ void renderRaceTrack(Model& model, Shader& shader)
 
 void renderSkyBox(Shader& shader)
 {
-    // viewMatrix Í¨¹ı¹¹Ôì£¬ÒÆ³ıÏà»úµÄÒÆ¶¯
+    // viewMatrix é€šè¿‡æ„é€ ï¼Œç§»é™¤ç›¸æœºçš„ç§»åŠ¨
     glm::mat4 viewMatrix = glm::mat4(glm::mat3(camera.GetViewMatrix()));
-    // Í¶Ó°
+    // æŠ•å½±
     glm::mat4 projMatrix = camera.GetProjMatrix((float)SCR_WIDTH / (float)SCR_HEIGHT);
 
     shader.setMat4("view", viewMatrix);
@@ -558,90 +610,46 @@ void renderSkyBox(Shader& shader)
 }
 
 // ---------------------------------
-// ¼üÅÌ/Êó±ê¼àÌı
+// é”®ç›˜/é¼ æ ‡ç›‘å¬
 // ---------------------------------
 
 void handleKeyInput(GLFWwindow* window)
 {
-    // escÍË³ö
+    // escé€€å‡º
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-
-    if (!isCameraFixed) {
-        // Ïà»ú WSAD Ç°ºó×óÓÒ SpaceÉÏ ×óCtrlÏÂ
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            camera.ProcessKeyboard(FORWARD, deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            camera.ProcessKeyboard(BACKWARD, deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            camera.ProcessKeyboard(LEFT, deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            camera.ProcessKeyboard(RIGHT, deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-            camera.ProcessKeyboard(UP, deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-            camera.ProcessKeyboard(DOWN, deltaTime);
-    } else {
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-            fixedCamera.ProcessKeyboard(CAMERA_LEFT, deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-            fixedCamera.ProcessKeyboard(CAMERA_RIGHT, deltaTime);
-    }
-
-    // ³µ³µÒÆ¶¯
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+   
+    //ç§»åŠ¨
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) 
         car.ProcessKeyboard(CAR_FORWARD, deltaTime);
-
-        // Ö»ÓĞ³µ³µ¶¯ÆğÀ´µÄÊ±ºò²Å¿ÉÒÔ×óÓÒĞı×ª
-        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-            car.ProcessKeyboard(CAR_LEFT, deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-            car.ProcessKeyboard(CAR_RIGHT, deltaTime);
-
-        if (isCameraFixed)
-            camera.ZoomOut();
-    }
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        car.ProcessKeyboard(CAR_LEFT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        car.ProcessKeyboard(CAR_RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) 
         car.ProcessKeyboard(CAR_BACKWARD, deltaTime);
 
-        // Í¬ÉÏ
-        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-            car.ProcessKeyboard(CAR_LEFT, deltaTime);
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-            car.ProcessKeyboard(CAR_RIGHT, deltaTime);
-
-        if (isCameraFixed)
-            camera.ZoomIn();
-    }
-    
-    // »Øµ÷¼àÌı°´¼ü£¨Ò»¸ö°´¼üÖ»»á´¥·¢Ò»´ÎÊÂ¼ş£©
+    // å›è°ƒç›‘å¬æŒ‰é”®ï¼ˆä¸€ä¸ªæŒ‰é”®åªä¼šè§¦å‘ä¸€æ¬¡äº‹ä»¶ï¼‰
     glfwSetKeyCallback(window, key_callback);
 }
 
-// °´¼ü»Øµ÷º¯Êı£¬Ê¹µÃÒ»´Î°´¼üÖ»´¥·¢Ò»´ÎÊÂ¼ş
+// æŒ‰é”®å›è°ƒå‡½æ•°ï¼Œä½¿å¾—ä¸€æ¬¡æŒ‰é”®åªè§¦å‘ä¸€æ¬¡äº‹ä»¶
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (key == GLFW_KEY_C && action == GLFW_PRESS) {
-        isCameraFixed = !isCameraFixed;
-        string info = isCameraFixed ? "ÇĞ»»Îª¹Ì¶¨ÊÓ½Ç" : "ÇĞ»»Îª×ÔÓÉÊÓ½Ç";
-        std::cout << "[CAMERA]" << info << std::endl;
+    //é¢„ç•™ç»™æ¢å¼¹
+    if (key == GLFW_KEY_R && action == GLFW_PRESS) {  
+#ifdef DEBUG_MODE
+        std::cout << "Pressed R" << std::endl;
+#endif
+        ;
     }
-    if (key == GLFW_KEY_X && action == GLFW_PRESS) {
-        isPolygonMode = !isPolygonMode;
-        if (isPolygonMode) {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        } else {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        }
-        string info = isPolygonMode ? "ÇĞ»»ÎªÏß¿òÍ¼äÖÈ¾Ä£Ê½" : "ÇĞ»»ÎªÕı³£äÖÈ¾Ä£Ê½";
-        std::cout << "[POLYGON_MODE]" << info << std::endl;
-    }
+    
 }
 
-// Êó±êÒÆ¶¯
+// é¼ æ ‡ç§»åŠ¨
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    if (!isCameraFixed) {
+    //if (!isCameraFixed) {
         if (firstMouse) {
             lastX = xpos;
             lastY = ypos;
@@ -649,37 +657,47 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
         }
 
         float xoffset = xpos - lastX;
-        float yoffset = lastY - ypos; // ×ø±ê·­×ªÒÔ¶ÔÓ¦×ø±êÏµ
+        float yoffset = lastY - ypos; // åæ ‡ç¿»è½¬ä»¥å¯¹åº”åæ ‡ç³»
 
         lastX = xpos;
         lastY = ypos;
 
-        camera.ProcessMouseMovement(xoffset, yoffset);
-    }
+        car.ProcessMouseMovement(xoffset, yoffset);
+    //}
 }
-
-// Êó±ê¹öÂÖ
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+//é¼ æ ‡æŒ‰é”®
+void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
 {
-    camera.ProcessMouseScroll(yoffset);
+    if (action == GLFW_PRESS)
+        switch (button)
+        {
+        case GLFW_MOUSE_BUTTON_LEFT:
+            //å°„å‡»
+#ifdef DEBUG_MODE
+            std::cout << "Pressed MOUSE LEFT BUTTON" << std::endl;
+#endif
+            break;
+        }
+    return;
 }
 
+
 // ---------------------------------
-// ´°¿ÚÏà¹Øº¯Êı
+// çª—å£ç›¸å…³å‡½æ•°
 // ---------------------------------
 
-// ¸Ä±ä´°¿Ú´óĞ¡µÄ»Øµ÷º¯Êı
+// æ”¹å˜çª—å£å¤§å°çš„å›è°ƒå‡½æ•°
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    // È·±£´°¿ÚÆ¥ÅäµÄĞÂ´°¿Ú³ß´ç
+    // ç¡®ä¿çª—å£åŒ¹é…çš„æ–°çª—å£å°ºå¯¸
     glViewport(0, 0, width, height);
 }
 
 // ---------------------------------
-// ¼ÓÔØÏà¹Øº¯Êı
+// åŠ è½½ç›¸å…³å‡½æ•°
 // ---------------------------------
 
-// ½«Áù·İÎÆÀí¼ÓÔØÎªÒ»¸öcubemapÎÆÀí
+// å°†å…­ä»½çº¹ç†åŠ è½½ä¸ºä¸€ä¸ªcubemapçº¹ç†
 unsigned int loadCubemap(vector<std::string> faces)
 {
     unsigned int textureID;

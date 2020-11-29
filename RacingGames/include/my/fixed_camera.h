@@ -17,10 +17,12 @@ public:
     glm::vec3 Position;
     float radius;
     float Yaw;
+    float Pitch;
     float TurningSpeed;
 
     FixedCamera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f))
         : Yaw(0.0f)
+        , Pitch(0.0f)
         , TurningSpeed(80.0f)
     {
         Position = position;
@@ -36,7 +38,10 @@ public:
     {
         return Yaw;
     }
-
+    float getPitch()
+    {
+        return Pitch;
+    }
     // º∆À„ ”Õºæÿ’Û
     glm::mat4 GetViewMatrix()
     {
