@@ -1,20 +1,20 @@
-#include <glad/glad.h>
+#include"include/glad/glad.h"
 
-#include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <learnopengl/camera.h>
-#include <learnopengl/filesystem.h>
-#include <learnopengl/model.h>
-#include <learnopengl/shader_m.h>
+#include "include/learnopengl/camera.h"
+#include "include/learnopengl/filesystem.h"
+#include "include/learnopengl/model.h"
+#include "include/learnopengl/shader_m.h"
 
-#include <my/car.h>
-#include <my/fixed_camera.h>
-
+#include "include/my/car.h"
+#include "include/my/fixed_camera.h"
+#include "include/stb_image.h"
 #include <iostream>
+#include "GLFW/glfw3.h"
 
 #pragma comment(lib, "glfw3.lib")
 #pragma comment(lib, "assimp.lib")
@@ -196,10 +196,10 @@ int main()
     // 相机模型
     Model cameraModel(FileSystem::getPath("asset/models/obj/camera-cube/camera-cube.obj"));
     // 赛道模型
-    Model raceTrackModel(FileSystem::getPath("asset/models/obj/race-track/race-track.obj"));
+	//Model raceTrackModel(FileSystem::getPath("asset/models/obj/race-track/race-track.obj"));
+    Model raceTrackModel(FileSystem::getPath("asset/models/obj/race-track/test.obj"));
     // STOP牌模型
-    Model stopSignModel(FileSystem::getPath("asset/models/obj/StopSign/StopSign.obj"));
-
+    Model stopSignModel(FileSystem::getPath("asset/models/obj/StopSign/Pirate.obj"));
     // ---------------------------------
     // shader 纹理配置
     // ---------------------------------
