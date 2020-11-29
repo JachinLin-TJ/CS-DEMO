@@ -1,0 +1,28 @@
+﻿  main.cpp
+d:\gitrepo\cs-demo\racinggames\include\my\car.h(102): warning C4018: “>”: 有符号/无符号不匹配
+d:\gitrepo\cs-demo\racinggames\include\my\car.h(112): warning C4018: “>”: 有符号/无符号不匹配
+d:\gitrepo\cs-demo\racinggames\main.cpp(408): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\gitrepo\cs-demo\racinggames\main.cpp(415): warning C4305: “初始化”: 从“double”到“float”截断
+d:\gitrepo\cs-demo\racinggames\main.cpp(416): warning C4244: “=”: 从“double”转换到“T”，可能丢失数据
+          with
+          [
+              T=float
+          ]
+d:\gitrepo\cs-demo\racinggames\main.cpp(417): warning C4244: “=”: 从“double”转换到“T”，可能丢失数据
+          with
+          [
+              T=float
+          ]
+d:\gitrepo\cs-demo\racinggames\main.cpp(418): warning C4244: “=”: 从“double”转换到“T”，可能丢失数据
+          with
+          [
+              T=float
+          ]
+d:\gitrepo\cs-demo\racinggames\main.cpp(646): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+d:\gitrepo\cs-demo\racinggames\main.cpp(647): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+d:\gitrepo\cs-demo\racinggames\main.cpp(651): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\gitrepo\cs-demo\racinggames\main.cpp(652): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+d:\gitrepo\cs-demo\racinggames\main.cpp(654): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+d:\gitrepo\cs-demo\racinggames\main.cpp(655): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+d:\gitrepo\cs-demo\racinggames\main.cpp(664): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+  RacingGames.vcxproj -> D:\gitRepo\CS-DEMO\Debug\RacingGames.exe
