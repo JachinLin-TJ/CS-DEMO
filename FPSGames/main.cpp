@@ -14,7 +14,8 @@
 #include "include/stb_image.h"
 #include <iostream>
 #include "GLFW/glfw3.h"
-
+#include "gun.h"
+#include "utils.h"
 #pragma comment(lib, "glfw3.lib")
 #pragma comment(lib, "assimp.lib")
 #define DEBUG_MODE
@@ -32,7 +33,7 @@ void updateFixedCamera();
 
 // 使用“&”引用性能更好
 void renderLight(Shader& shader);
-void renderGunAndCamera(Model& carModel, Model& cameraModel, Shader& shader);
+void renderGunAndCamera(Gun& curGun, Model& cameraModel, Shader& shader);
 void renderCamera(Model& model, glm::mat4 modelMatrix, Shader& shader);
 void renderGun(Model& model, glm::mat4 modelMatrix, Shader& shader);
 void renderGun(Model& model, Shader& shader);
@@ -49,24 +50,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 unsigned int loadCubemap(vector<std::string> faces);
 
-// ------------------------------------------
-// 全局变量
-// ------------------------------------------
 
-// 窗口尺寸
-const unsigned int SCR_WIDTH = 1920;
-const unsigned int SCR_HEIGHT = 1080;
 
-// 渲染阴影时的窗口分辨率（会影响阴影的锯齿边情况）
-const unsigned int SHADOW_WIDTH = 1024 * 10;
-const unsigned int SHADOW_HEIGHT = 1024 * 10;
-
-// 是否为线框图模式
 bool isPolygonMode = false;
-
-// 世界坐标系单位向量
-glm::vec3 WORLD_UP(0.0f, 1.0f, 0.0f);
-glm::vec3 WORLD_X(1.0f, 0.0f, 0.0f);
 
 // 汽车
 Car car(glm::vec3(0.0f, 0.05f, 0.0f));
@@ -203,7 +189,11 @@ int main()
     // 枪械模型
     // Model another_rifleModel(FileSystem::getPath("asset/models/obj/ACPGun/Handgun_obj.obj"));
     // Model another_rifleModel(FileSystem::getPath("asset/models/obj/DragonSniper/AWP_Dragon_Lore.obj"));
-    Model rifleModel(FileSystem::getPath("asset/models/obj/AK47/AK47.obj"));
+    // Model rifleModel(FileSystem::getPath("asset/models/obj/AK47/AK47.obj"));
+
+    Gun curGun(FileSystem::getPath(AK_Path), 31, 30);
+
+    // Gun curGun(FileSystem::getPath(AWP_Path), 31, 30);
 
 
     // ---------------------------------
@@ -282,7 +272,7 @@ int main()
         updateFixedCamera();
 
         // 使用shader渲染Gun和Camera（层级模型）
-        renderGunAndCamera(rifleModel, cameraModel, shader);
+        renderGunAndCamera(curGun, cameraModel, shader);
         renderEnemy(enemyModel, shader);
         // 渲染地图
         renderMap(mapModel, shader);
@@ -452,7 +442,7 @@ void renderLight(Shader& shader)
 
 
 
-void renderGunAndCamera(Model& gunModel, Model& cameraModel, Shader& shader)
+void renderGunAndCamera(Gun& curGun, Model& cameraModel, Shader& shader)
 {
     // 视图转换
     glm::mat4 viewMatrix = camera.GetViewMatrix();
@@ -470,7 +460,8 @@ void renderGunAndCamera(Model& gunModel, Model& cameraModel, Shader& shader)
     modelMatrix = glm::rotate(modelMatrix, glm::radians(car.getDelayYaw() / 2), WORLD_UP);
 
     // 渲染枪支
-    renderGun(gunModel, modelMatrix, shader);
+    curGun.Display_HoldGun(camera, shader, modelMatrix,car);
+    // renderGun(gunModel, modelMatrix, shader);
 
     // 由于mat4作函数参数时为值传递，故不需要备份modelMatrix
 
