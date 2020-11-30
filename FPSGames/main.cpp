@@ -37,6 +37,7 @@ void renderCamera(Model& model, glm::mat4 modelMatrix, Shader& shader);
 void renderGun(Model& model, glm::mat4 modelMatrix, Shader& shader);
 void renderGun(Model& model, Shader& shader);
 void renderMap(Model& model, Shader& shader);
+void renderEnemy(Model& model, Shader& shader);
 void renderSkyBox(Shader& shader);
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -282,7 +283,7 @@ int main()
 
         // 使用shader渲染Gun和Camera（层级模型）
         renderGunAndCamera(rifleModel, cameraModel, shader);
-    
+        renderEnemy(enemyModel, shader);
         // 渲染地图
         renderMap(mapModel, shader);
 
@@ -489,7 +490,22 @@ void renderCamera(Model& model, glm::mat4 modelMatrix, Shader& shader)
 
     model.Draw(shader);
 }
+void renderEnemy(Model& model, Shader& shader)
+{
+    // 视图转换
+    glm::mat4 viewMatrix = camera.GetViewMatrix();
+    shader.setMat4("view", viewMatrix);
+    // 模型转换
+    glm::mat4 modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(3.0f, 1.5f, -4.0f));
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(-120.0f), WORLD_UP);
+    shader.setMat4("model", modelMatrix);
+    // 投影转换
+    glm::mat4 projMatrix = camera.GetProjMatrix((float)SCR_WIDTH / (float)SCR_HEIGHT);
+    shader.setMat4("projection", projMatrix);
 
+    model.Draw(shader);
+}
 
 
 void GunRotate(glm::mat4 & modelMatrix,const glm::vec3  &Point, float degree)
