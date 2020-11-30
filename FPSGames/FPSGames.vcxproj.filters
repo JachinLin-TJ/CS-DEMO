@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\my\car.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\my\fixed_camera.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -25,6 +22,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\my\gunCamera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="control.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -39,6 +42,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="gun.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="control.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -8,7 +8,7 @@
 #include "include/learnopengl/filesystem.h"
 #include "include/learnopengl/model.h"
 #include "include/learnopengl/shader_m.h"
-#include "include/my/car.h"
+#include "include/my/gunCamera.h"
 
 // 窗口尺寸
 const unsigned int SCR_WIDTH = 1920;
@@ -18,7 +18,6 @@ const unsigned int SCR_HEIGHT = 1080;
 const unsigned int SHADOW_WIDTH = 1024 * 10;
 const unsigned int SHADOW_HEIGHT = 1024 * 10;
 
-// 是否为线框图模式
 
 
 // 世界坐标系单位向量

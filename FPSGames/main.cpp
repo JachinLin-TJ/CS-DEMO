@@ -9,7 +9,7 @@
 #include "include/learnopengl/model.h"
 #include "include/learnopengl/shader_m.h"
 
-#include "include/my/car.h"
+#include "include/my/gunCamera.h"
 #include "include/my/fixed_camera.h"
 #include "include/stb_image.h"
 #include <iostream>
@@ -18,7 +18,7 @@
 #include "utils.h"
 #pragma comment(lib, "glfw3.lib")
 #pragma comment(lib, "assimp.lib")
-#define DEBUG_MODE
+
 // ------------------------------------------
 // 函数声明
 // ------------------------------------------
@@ -54,8 +54,8 @@ unsigned int loadCubemap(vector<std::string> faces);
 
 bool isPolygonMode = false;
 
-// 汽车
-Car car(glm::vec3(0.0f, 0.05f, 0.0f));
+// 视角相机
+GunCamera gunCamera(glm::vec3(0.0f, 0.05f, 0.0f));
 
 // 相机
 glm::vec3 cameraPos(0.0f, 2.0f, 5.0f);
@@ -264,9 +264,9 @@ int main()
         // 设置光照相关属性
         renderLight(shader);
         
-        car.UpdateDelayYaw();
-        car.UpdateDelayPitch();
-        car.UpdateDelayPosition();
+        gunCamera.UpdateDelayYaw();
+        gunCamera.UpdateDelayPitch();
+        gunCamera.UpdateDelayPosition();
 
 
         updateFixedCamera();
@@ -413,7 +413,7 @@ void updateFixedCamera()
     // 自动逐渐复原Zoom为默认值
     camera.ZoomRecover();
     // 处理相机相对于车坐标系下的向量坐标转换为世界坐标系下的向量
-    float angle = glm::radians(-car.getMidValYaw());
+    float angle = glm::radians(-gunCamera.getMidValYaw());
     glm::mat4 rotateMatrix(
         cos(angle), 0.0, sin(angle), 0.0,
         0.0, 1.0, 0.0, 0.0,
@@ -421,7 +421,7 @@ void updateFixedCamera()
         0.0, 0.0, 0.0, 1.0);
     glm::vec3 rotatedPosition = glm::vec3(rotateMatrix * glm::vec4(fixedCamera.getPosition(), 1.0));
 
-    camera.FixView(rotatedPosition + car.getMidValPosition(), fixedCamera.getYaw() + car.getMidValYaw(),car.getMidValPitch());
+    camera.FixView(rotatedPosition + gunCamera.getMidValPosition(), fixedCamera.getYaw() + gunCamera.getMidValYaw(), gunCamera.getMidValPitch());
 }
 
 // ---------------------------------
@@ -456,11 +456,11 @@ void renderGunAndCamera(Gun& curGun, Model& cameraModel, Shader& shader)
 
     // 模型转换
     glm::mat4 modelMatrix = glm::mat4(1.0f);
-    modelMatrix = glm::translate(modelMatrix, car.getMidValPosition());
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(car.getDelayYaw() / 2), WORLD_UP);
+    modelMatrix = glm::translate(modelMatrix, gunCamera.getMidValPosition());
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(gunCamera.getDelayYaw() / 2), WORLD_UP);
 
     // 渲染枪支
-    curGun.Display_HoldGun(camera, shader, modelMatrix,car);
+    curGun.Display_HoldGun(camera, shader, modelMatrix, gunCamera);
     // renderGun(gunModel, modelMatrix, shader);
 
     // 由于mat4作函数参数时为值传递，故不需要备份modelMatrix
@@ -472,7 +472,7 @@ void renderGunAndCamera(Gun& curGun, Model& cameraModel, Shader& shader)
 
 void renderCamera(Model& model, glm::mat4 modelMatrix, Shader& shader)
 {
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(fixedCamera.getYaw() + car.getYaw() / 2), WORLD_UP);
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(fixedCamera.getYaw() + gunCamera.getYaw() / 2), WORLD_UP);
     modelMatrix = glm::translate(modelMatrix, cameraPos);
     modelMatrix = glm::scale(modelMatrix, glm::vec3(0.01f, 0.01f, 0.01f));
 
@@ -508,8 +508,8 @@ void GunRotate(glm::mat4 & modelMatrix,const glm::vec3  &Point, float degree)
 }
 void renderGun(Model& model, glm::mat4 modelMatrix, Shader& shader)
 {
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(car.getYaw() - car.getDelayYaw() / 2), WORLD_UP);
-    GunRotate(modelMatrix, glm::vec3(0.0f, 0.0f, 4.0f), (car.getPitch() - car.getDelayPitch() / 2));
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(gunCamera.getYaw() - gunCamera.getDelayYaw() / 2), WORLD_UP);
+    GunRotate(modelMatrix, glm::vec3(0.0f, 0.0f, 4.0f), (gunCamera.getPitch() - gunCamera.getDelayPitch() / 2));
 
     // modelMatrix = glm::rotate(modelMatrix, glm::radians(-(car.getPitch() - car.getDelayPitch() / 2)), WORLD_X);
 
@@ -573,79 +573,6 @@ void renderSkyBox(Shader& shader)
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
 }
-
-// ---------------------------------
-// 键盘/鼠标监听
-// ---------------------------------
-
-void handleKeyInput(GLFWwindow* window)
-{
-    // esc退出
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-   
-    //移动
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) 
-        car.ProcessKeyboard(CAR_FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        car.ProcessKeyboard(CAR_LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        car.ProcessKeyboard(CAR_RIGHT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) 
-        car.ProcessKeyboard(CAR_BACKWARD, deltaTime);
-
-    // 回调监听按键（一个按键只会触发一次事件）
-    glfwSetKeyCallback(window, key_callback);
-}
-
-// 按键回调函数，使得一次按键只触发一次事件
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    //预留给换弹
-    if (key == GLFW_KEY_R && action == GLFW_PRESS) {  
-#ifdef DEBUG_MODE
-        std::cout << "Pressed R" << std::endl;
-#endif
-        ;
-    }
-    
-}
-
-// 鼠标移动
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-    //if (!isCameraFixed) {
-        if (firstMouse) {
-            lastX = xpos;
-            lastY = ypos;
-            firstMouse = false;
-        }
-
-        float xoffset = xpos - lastX;
-        float yoffset = lastY - ypos; // 坐标翻转以对应坐标系
-
-        lastX = xpos;
-        lastY = ypos;
-
-        car.ProcessMouseMovement(xoffset, yoffset);
-    //}
-}
-//鼠标按键
-void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
-{
-    if (action == GLFW_PRESS)
-        switch (button)
-        {
-        case GLFW_MOUSE_BUTTON_LEFT:
-            //射击
-#ifdef DEBUG_MODE
-            std::cout << "Pressed MOUSE LEFT BUTTON" << std::endl;
-#endif
-            break;
-        }
-    return;
-}
-
 
 // ---------------------------------
 // 窗口相关函数

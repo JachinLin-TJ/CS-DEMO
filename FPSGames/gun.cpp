@@ -39,10 +39,10 @@ void Gun::GunRotate(glm::mat4& modelMatrix, const glm::vec3& Point, float degree
     modelMatrix = glm::translate(modelMatrix, -Point);
 
 }
-void Gun::Display_HoldGun(Camera & camera, Shader& shader, glm::mat4 modelMatrix, Car & car)
+void Gun::Display_HoldGun(Camera & camera, Shader& shader, glm::mat4 modelMatrix, GunCamera& gunCamera)
 {
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(car.getYaw() - car.getDelayYaw() / 2), WORLD_UP);
-    GunRotate(modelMatrix, glm::vec3(0.0f, 0.0f, 4.0f), (car.getPitch() - car.getDelayPitch() / 2));
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(gunCamera.getYaw() - gunCamera.getDelayYaw() / 2), WORLD_UP);
+    GunRotate(modelMatrix, glm::vec3(0.0f, 0.0f, 4.0f), (gunCamera.getPitch() - gunCamera.getDelayPitch() / 2));
 
     // modelMatrix = glm::rotate(modelMatrix, glm::radians(-(car.getPitch() - car.getDelayPitch() / 2)), WORLD_X);
 
