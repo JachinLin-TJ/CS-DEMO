@@ -76,4 +76,3 @@ void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
         }
     return;
 }
-
