@@ -203,9 +203,7 @@ int main()
 	// GUI
 	// Quad Texture Shader
 	Shader quadsShader("shader/Quads.vs", "shader/Quads.fs");
-	quadsTextureInit();
 	Shader textShader("shader/Text.vs", "shader/Text.fs");
-	textTextureInit(textShader);
 	
 	// ------------------------------
 	// 模型加载
@@ -223,10 +221,14 @@ int main()
 	// Model another_rifleModel(FileSystem::getPath("asset/models/obj/DragonSniper/AWP_Dragon_Lore.obj"));
 	// Model rifleModel(FileSystem::getPath("asset/models/obj/AK47/AK47.obj"));
 
-	Gun curGun(FileSystem::getPath(AK_Path), 31, 30);
+	Gun curGun(FileSystem::getPath(AWP_Path), 31, 30);
 
 	// Gun curGun(FileSystem::getPath(AWP_Path), 31, 30);
-
+	
+	//	texture conflicts ?
+	//	put quads and text texture rendering after gun rendering
+	quadsTextureInit();
+	textTextureInit(textShader);
 
 	// ---------------------------------
 	// shader 纹理配置
@@ -302,7 +304,7 @@ int main()
 		shader.use();
 
 		// 设置光照相关属性
-		renderLight(shader);
+		// renderLight(shader);
 
 		gunCamera.UpdateDelayYaw();
 		gunCamera.UpdateDelayPitch();
@@ -329,7 +331,6 @@ int main()
 		
 		//  Text Rendering
 		renderGUI(textShader, quadsShader);
-	
 
 		// 交换缓冲区和调查IO事件（按下的按键,鼠标移动等）
 		glfwSwapBuffers(window);

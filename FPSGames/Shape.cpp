@@ -87,8 +87,8 @@ void Quads::loadTextures(std::string tex)
     unsigned char* data = stbi_load(tex.c_str(), &width, &height, &nrChannels, 0);
     if (data)
     {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        //  glEnable(GL_BLEND);
+        //  glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
