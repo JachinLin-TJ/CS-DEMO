@@ -4,8 +4,8 @@
 #include <cstdlib>
 #include <string>
 
-// TODO ¸Ä³ÉÏîÄ¿µÄ¾ø¶ÔÂ·¾¶£¨Ô­À´ÊÇÓÃCMAKEÉú³ÉµÄ£©
-const char* logl_root = "";
+// TODO ï¿½Ä³ï¿½ï¿½ï¿½Ä¿ï¿½Ä¾ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½CMAKEï¿½ï¿½ï¿½ÉµÄ£ï¿½
+static const char* logl_root = "";
 
 class FileSystem {
 private:
@@ -21,7 +21,7 @@ public:
 private:
     static std::string const& getRoot()
     {
-		static char const* envRoot = getenv("LOGL_ROOT_PATH");
+		static char const* envRoot = getenv("_PATH");
         static char const* givenRoot = (envRoot != nullptr ? envRoot : logl_root);
         static std::string root = (givenRoot != nullptr ? givenRoot : "");
         return root;

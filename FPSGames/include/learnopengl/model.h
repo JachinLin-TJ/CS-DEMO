@@ -28,25 +28,25 @@ using namespace std;
 
 #pragma comment(lib, "assimp.lib")
 
-unsigned int TextureFromFile(const char* path, const string& directory, bool gamma = false);
+static unsigned int TextureFromFile(const char* path, const string& directory, bool gamma = false);
 
 class Model {
 public:
-    /*  Ä£ÐÍÊý¾Ý  */
-    vector<Texture> textures_loaded; // ±£´æËùÓÐ¼ÓÔØ¹ýµÄÎÆÀí£¬ÒÔÓÅ»¯±»·´¸´Ê¹ÓÃµÄÏàÍ¬ÎÆÀí
+    /*  Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  */
+    vector<Texture> textures_loaded; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½Ø¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ãµï¿½ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½
     vector<Mesh> meshes;
     string directory;
     bool gammaCorrection;
 
-    /*  º¯Êý  */
-    // ¹¹Ôìº¯Êý£¬´ÓÂ·¾¶ÖÐ¶ÁÈ¡Ä£ÐÍ
+    /*  ï¿½ï¿½ï¿½ï¿½  */
+    // ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½Ð¶ï¿½È¡Ä£ï¿½ï¿½
     Model(string const& path, bool gamma = false)
         : gammaCorrection(gamma)
     {
         loadModel(path);
     }
 
-    // »æÖÆÄ£ÐÍµÄËùÓÐÍø¸ñ
+    // ï¿½ï¿½ï¿½ï¿½Ä£ï¿½Íµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     void Draw(Shader shader)
     {
         for (unsigned int i = 0; i < meshes.size(); i++) {
@@ -55,37 +55,37 @@ public:
     }
 
 private:
-    /*  ·½·¨  */
-    // ´ÓÎÄ¼þ¼ÓÔØÄ£ÐÍÖ§³Ö ASSIMP À©Õ¹²¢´æ´¢ÔÚÍø¸ñÉú³ÉµÄÍø¸ñÏòÁ¿
+    /*  ï¿½ï¿½ï¿½ï¿½  */
+    // ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½Ö§ï¿½ï¿½ ASSIMP ï¿½ï¿½Õ¹ï¿½ï¿½ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     void loadModel(string const& path)
     {
-        // Í¨¹ý ASSIMP ¼ÓÔØÄ£ÐÍÎÄ¼þ
+        // Í¨ï¿½ï¿½ ASSIMP ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Ä¼ï¿½
         Assimp::Importer importer;
-        // ²ÎÊý£º½«Ä£ÐÍËùÓÐµÄÍ¼ÔªÐÎ×´±ä»»ÎªÈý½ÇÐÎ | ÔÚ´¦ÀíµÄÊ±ºò·­×ªyÖáµÄÎÆÀí×ø±ê | ÎªÃ¿¸ö¼ÓÔØµÄ¶¥µã¼ÆËã³öÈáºÍµÄTangentºÍBitangentÏòÁ¿
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Í¼Ôªï¿½ï¿½×´ï¿½ä»»Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ | ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½×ªyï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ | ÎªÃ¿ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Íµï¿½Tangentï¿½ï¿½Bitangentï¿½ï¿½ï¿½ï¿½
         const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
-        // ÅÐ¶ÏÊÇ·ñÓÐ´íÎó
+        // ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½Ð´ï¿½ï¿½ï¿½
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
             cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << endl;
             return;
         }
-        // ¼ìË÷ÎÄ¼þÂ·¾¶µÄÄ¿Â¼Â·¾¶
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½Â·ï¿½ï¿½ï¿½ï¿½Ä¿Â¼Â·ï¿½ï¿½
         directory = path.substr(0, path.find_last_of('/'));
 
-        // µÝ¹é´¦Àí ASSIMP µÄ¸ù½Úµã
+        // ï¿½Ý¹é´¦ï¿½ï¿½ ASSIMP ï¿½Ä¸ï¿½ï¿½Úµï¿½
         processNode(scene->mRootNode, scene);
     }
 
-    // ÒÔµÝ¹é·½Ê½´¦Àí½Úµã
-    // ´¦Àí½ÚµãÖÐÃ¿¸öµ¥¶ÀµÄÍø¸ñ£¬²¢¶ÔÓÚÆä×Ó½Úµã£¨Èç¹ûÓÐ£©ÖØ¸´´Ë¹ý³Ì
-    // scene °üº¬ËùÓÐÊý¾Ý£¬node ÓÃÀ´±í´ï²¿¼þÖ®¼äµÄ¹ØÏµ
+    // ï¿½ÔµÝ¹é·½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ñ£¬²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó½Úµã£¨ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½Ø¸ï¿½ï¿½Ë¹ï¿½ï¿½ï¿½
+    // scene ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½node ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï²¿ï¿½ï¿½Ö®ï¿½ï¿½Ä¹ï¿½Ïµ
     void processNode(aiNode* node, const aiScene* scene)
     {
-        // ´¦Àí½ÚµãµÄËùÓÐÍø¸ñ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         for (unsigned int i = 0; i < node->mNumMeshes; i++) {
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
             meshes.push_back(processMesh(mesh, scene));
         }
-        // ½ÓÏÂÀ´¶ÔËüµÄ×Ó½ÚµãÖØ¸´ÕâÒ»¹ý³Ì
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó½Úµï¿½ï¿½Ø¸ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
         for (unsigned int i = 0; i < node->mNumChildren; i++) {
             processNode(node->mChildren[i], scene);
         }
@@ -97,17 +97,17 @@ private:
         vector<unsigned int> indices;
         vector<Texture> textures;
 
-        // ±éÀú mesh µÄËùÓÐ¶¥µã
+        // ï¿½ï¿½ï¿½ï¿½ mesh ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½
         for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
             Vertex vertex;
-            // ÒòÎªassimpÊ¹ÓÃÁË×Ô¼ºµÄÏòÁ¿Àà£¬¸ÃÀà²»»áÖ±½Ó×ª»»ÎªglmµÄvec3Àà£¬Òò´ËÎÒÃÇÊ×ÏÈ½«Êý¾Ý´«Êäµ½¸ÃÕ¼Î»·ûglm::vec3
+            // ï¿½ï¿½ÎªassimpÊ¹ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à£¬ï¿½ï¿½ï¿½à²»ï¿½ï¿½Ö±ï¿½ï¿½×ªï¿½ï¿½Îªglmï¿½ï¿½vec3ï¿½à£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È½ï¿½ï¿½ï¿½ï¿½Ý´ï¿½ï¿½äµ½ï¿½ï¿½Õ¼Î»ï¿½ï¿½glm::vec3
             glm::vec3 vector;
-            // Î»ÖÃ
+            // Î»ï¿½ï¿½
             vector.x = mesh->mVertices[i].x;
             vector.y = mesh->mVertices[i].y;
             vector.z = mesh->mVertices[i].z;
             vertex.Position = vector;
-            // ·¨Ïß
+            // ï¿½ï¿½ï¿½ï¿½
             if (mesh->mNormals) {
                 vector.x = mesh->mNormals[i].x;
                 vector.y = mesh->mNormals[i].y;
@@ -116,11 +116,11 @@ private:
             } else {
                 vertex.Normal = glm::vec3(0.0f, 0.0f, 0.0f);
             }
-            // ÎÆÀí×ø±ê
-            if (mesh->mTextureCoords[0]) // Íø¸ñÊÇ·ñÓÐÎÆÀí×ø±ê£¿
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            if (mesh->mTextureCoords[0]) // ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê£¿
             {
                 glm::vec2 vec;
-                // ÓÉÓÚÒ»¸ö¶¥µã¿ÉÒÔ°üº¬8ÖÖ²»Í¬µÄÎÆÀí×ø±ê£¬ÎÒÃÇ¼ÙÉèÎÒÃÇ²»»áÊ¹ÓÃÆäÖÐÒ»¸ö¶¥µã¿ÉÒÔÓÐ¶à¸öÎÆÀí×ø±êµÄÄ£ÐÍ,ËùÒÔÎÒÃÇ×ÜÊÇÈ¡0
+                // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô°ï¿½ï¿½ï¿½8ï¿½Ö²ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê£¬ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡0
                 vec.x = mesh->mTextureCoords[0][i].x;
                 vec.y = mesh->mTextureCoords[0][i].y;
                 vertex.TexCoords = vec;
@@ -148,18 +148,18 @@ private:
             vertices.push_back(vertex);
         }
 
-        // ´¦ÀíË÷Òý
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
             aiFace face = mesh->mFaces[i];
-            // ¼ìË÷ËùÓÐÃæµÄË÷Òý£¬´æ´¢Ë÷ÒýÏòÁ¿
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             for (unsigned int j = 0; j < face.mNumIndices; j++)
                 indices.push_back(face.mIndices[j]);
         }
 
-        // ´¦Àí²ÄÖÊ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-        // ¼Ù¶¨ shader ÄÚµÄ²ÄÖÊÏà¹Ø±äÁ¿ÃüÃû¶¼×ñÑ­ÒÔÏÂ¹æ·¶£º£¨NÎª0µ½×î´óÖµµÄÒ»¸öÊý×Ö£©
+        // ï¿½Ù¶ï¿½ shader ï¿½ÚµÄ²ï¿½ï¿½ï¿½ï¿½ï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½Â¹æ·¶ï¿½ï¿½ï¿½ï¿½NÎª0ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ö£ï¿½
         // diffuse: texture_diffuseN
         // specular: texture_specularN
         // normal: texture_normalN
@@ -178,34 +178,34 @@ private:
         std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
-        // ·µ»ØÒ»¸ö Mesh ¶ÔÏó
+        // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ Mesh ï¿½ï¿½ï¿½ï¿½
         return Mesh(vertices, indices, textures);
     }
 
-    // ¼ÓÔØ²ÄÖÊÎÆÀí
+    // ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName)
     {
         vector<Texture> textures;
         for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
             aiString str;
             mat->GetTexture(type, i, &str);
-            // ¼ì²é½á¹¹ÊÇ·ñ±»¼ÓÔØ£¬Èç¹ûÊÇÔòÌø¹ý
+            // ï¿½ï¿½ï¿½á¹¹ï¿½Ç·ñ±»¼ï¿½ï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             bool skip = false;
             for (unsigned int j = 0; j < textures_loaded.size(); j++) {
                 if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0) {
                     textures.push_back(textures_loaded[j]);
-                    skip = true; // ÏàÍ¬µÄÎÆÀíÂ·¾¶ÒÑ¾­¼ÓÔØ¹ýÁË£¬¿ÉÒÔÌø¹ý
+                    skip = true; // ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½Ø¹ï¿½ï¿½Ë£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                     break;
                 }
             }
-            // Î´¼ÓÔØ¹ý
+            // Î´ï¿½ï¿½ï¿½Ø¹ï¿½
             if (!skip) {
                 Texture texture;
                 texture.id = TextureFromFile(str.C_Str(), this->directory);
                 texture.type = typeName;
                 texture.path = str.C_Str();
                 textures.push_back(texture);
-                textures_loaded.push_back(texture); // Ìí¼Óµ½ÒÑ¼ÓÔØµÄÎÆÀíÖÐ
+                textures_loaded.push_back(texture); // ï¿½ï¿½ï¿½Óµï¿½ï¿½Ñ¼ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             }
         }
         return textures;

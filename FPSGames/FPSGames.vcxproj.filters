@@ -15,10 +15,25 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\my\car.h">
+    <ClInclude Include="include\my\fixed_camera.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\my\fixed_camera.h">
+    <ClInclude Include="gun.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\my\gunCamera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="control.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -30,6 +45,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="stb_image.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gun.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="control.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

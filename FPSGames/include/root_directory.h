@@ -1,1 +1,1 @@
-const char * logl_root = "Z:/×÷Òµ/¼ÆËã»úÍ¼ÐÎÑ§/´ó×÷Òµ/2017192023_BigProject/2017192023_BigProject";
+const char * logl_root = "Z:/ï¿½ï¿½Òµ/ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½Ñ§/ï¿½ï¿½ï¿½ï¿½Òµ/2017192023_BigProject/2017192023_BigProject";
