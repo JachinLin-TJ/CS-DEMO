@@ -221,7 +221,7 @@ int main()
 	// Model another_rifleModel(FileSystem::getPath("asset/models/obj/DragonSniper/AWP_Dragon_Lore.obj"));
 	// Model rifleModel(FileSystem::getPath("asset/models/obj/AK47/AK47.obj"));
 
-	Gun curGun(FileSystem::getPath(AWP_Path), 31, 30);
+	Gun curGun(FileSystem::getPath(AK_Path), 31, 30);
 
 	// Gun curGun(FileSystem::getPath(AWP_Path), 31, 30);
 	
@@ -267,7 +267,7 @@ int main()
 		// ---------------------------------
 		// 渲染获得场景的深度信息
 		// ---------------------------------
-		
+
 		// 定义光源视见体，即阴影生成范围的正交投影矩阵
 		glm::mat4 lightProjection = glm::ortho(
 			-200.0f, 200.0f,
@@ -304,7 +304,7 @@ int main()
 		shader.use();
 
 		// 设置光照相关属性
-		// renderLight(shader);
+		renderLight(shader);
 
 		gunCamera.UpdateDelayYaw();
 		gunCamera.UpdateDelayPitch();
@@ -526,8 +526,8 @@ void renderLight(Shader& shader)
 void renderGUI(Shader& textShader, Shader& quadsShader)
 {
 	for (unsigned int i = 0; i < quadsObjects.size(); i++) {
-		quadsObjects[i].activateTexture();
 		quadsShader.use();
+		quadsObjects[i].activateTexture();
 		quadsObjects[i].draw();
 	}
 

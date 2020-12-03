@@ -36,19 +36,19 @@ Quads::~Quads()
 {
 }
 
-void Quads::draw() const
+void Quads::draw()
 {
-    unsigned int VBO, VAO, EBO;
+    unsigned int vbo, vao, ebo;
     
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
 
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, this->getVerticesSize(), this->getVertices(), GL_STATIC_DRAW);
     
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->getIndicesSize(), this->getIndices(), GL_STATIC_DRAW);
 
     // position attribute
@@ -62,9 +62,15 @@ void Quads::draw() const
     // texture coord attribute
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
-
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    
+    //  this->CreateQuadsObject();
+    glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+
+    glDeleteVertexArrays(1, &vao);
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &ebo);
 }
 
 void Quads::loadTextures(std::string tex)
@@ -87,8 +93,6 @@ void Quads::loadTextures(std::string tex)
     unsigned char* data = stbi_load(tex.c_str(), &width, &height, &nrChannels, 0);
     if (data)
     {
-        //  glEnable(GL_BLEND);
-        //  glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
@@ -119,6 +123,34 @@ void Quads::buildIndices()
 {
     addElements<unsigned int>(this->indices, 0, 1, 3);
     addElements<unsigned int>(this->indices, 1, 2, 3);
+}
+
+void Quads::CreateQuadsObject()
+{
+    glGenVertexArrays(1, (GLuint*)&q_vao);
+    glBindVertexArray(q_vao);
+
+    glGenBuffers(1, (GLuint*)&q_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, q_vbo);
+    glBufferData(GL_ARRAY_BUFFER, this->getVerticesSize(), this->getVertices(), GL_STATIC_DRAW);
+
+    glGenBuffers(1, (GLuint*)&q_ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, q_ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->getIndicesSize(), this->getIndices(), GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // texture coord attribute
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+
+    glBindVertexArray(0);
 }
 
 const float* Quads::getVertices() const

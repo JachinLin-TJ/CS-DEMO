@@ -12,7 +12,7 @@ public:
 	Quads(float _height, float _width ,float _posx, float _posy);
 	~Quads();
 
-	void draw() const;
+	void draw();
 	void loadTextures(std::string tex);
 	void activateTexture() const;
 
@@ -28,8 +28,11 @@ private:
 	std::vector<float> vertices;
 	std::vector<unsigned int> indices;
 
+	unsigned int q_vao, q_vbo, q_ebo;
+
 	unsigned int quadTexture;
 	
 	void buildVertices();
 	void buildIndices();
+	void CreateQuadsObject();
 };
