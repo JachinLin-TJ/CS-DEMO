@@ -16,8 +16,12 @@
 #include "GLFW/glfw3.h"
 #include "gun.h"
 #include "utils.h"
+#include "Font.h"
+#include "Shape.h"
+
 #pragma comment(lib, "glfw3.lib")
 #pragma comment(lib, "assimp.lib")
+#pragma comment(lib, "freetype.lib")
 
 // ------------------------------------------
 // 函数声明
@@ -27,6 +31,8 @@ GLFWwindow* windowInit();
 bool init();
 void depthMapFBOInit();
 void skyboxInit();
+void textTextureInit(Shader& shader);
+void quadsTextureInit();
 
 void setDeltaTime();
 void updateFixedCamera();
@@ -40,6 +46,7 @@ void renderGun(Model& model, Shader& shader);
 void renderMap(Model& model, Shader& shader);
 void renderEnemy(Model& model, Shader& shader);
 void renderSkyBox(Shader& shader);
+void renderGUI(Shader& textShader, Shader& quadsShader);
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -141,12 +148,31 @@ const vector<std::string> faces{
 	FileSystem::getPath("asset/textures/skybox/back.tga")
 };
 
+//  Text Rendering
+std::vector<Text> textObjects;
+const std::vector<glm::vec2> textObjectsPos = {
+	glm::vec2(SCR_WIDTH		/ 32 + 100.0f,	SCR_HEIGHT / 12),
+	glm::vec2(SCR_WIDTH * 5 / 32 + 100.0f,	SCR_HEIGHT / 12)
+};
+
+//  Quads Rendering: AmmoIcon, HealthIcon, CrossHair
+std::vector<Quads> quadsObjects;
+const std::vector<glm::vec2> quadsObjectsPos = {
+	glm::vec2(SCR_WIDTH		/ 32,	SCR_HEIGHT / 12),
+	glm::vec2(SCR_WIDTH * 5 / 32,	SCR_HEIGHT / 12)
+};
+
+const std::vector<float> quadsSize = {
+	0.05f, 0.05f, 0.1f
+};
+
 // ------------------------------------------
 // main函数
 // ------------------------------------------
 
 int main()
 {
+	
 	// ------------------------------
 	// 初始化
 	// ------------------------------
@@ -166,15 +192,19 @@ int main()
 	// ------------------------------
 	// 构建和编译着色器
 	// ------------------------------
-
+	
 	// 为所有物体添加光照和阴影的shader
 	// BUG:在地图上无法显示阴影
 	Shader shader("shader/light_and_shadow.vs", "shader/light_and_shadow.fs");
-	// 从太阳平行光角度生成深度信息的shader 
+	// 从太阳平行光角度生成深度信息的shader
 	//Shader depthShader("shader/shadow_mapping_depth.vs", "shader/shadow_mapping_depth.fs");
 	// 天空盒shader
 	Shader skyboxShader("shader/skybox.vs", "shader/skybox.fs");
-
+	// GUI
+	// Quad Texture Shader
+	Shader quadsShader("shader/Quads.vs", "shader/Quads.fs");
+	Shader textShader("shader/Text.vs", "shader/Text.fs");
+	
 	// ------------------------------
 	// 模型加载
 	// ------------------------------
@@ -194,7 +224,11 @@ int main()
 	Gun curGun(FileSystem::getPath(AK_Path), 31, 30);
 
 	// Gun curGun(FileSystem::getPath(AWP_Path), 31, 30);
-
+	
+	//	texture conflicts ?
+	//	put quads and text texture rendering after gun rendering
+	quadsTextureInit();
+	textTextureInit(textShader);
 
 	// ---------------------------------
 	// shader 纹理配置
@@ -207,10 +241,13 @@ int main()
 	skyboxShader.use();
 	skyboxShader.setInt("skybox", 0);
 
+	quadsShader.use();
+	quadsShader.setInt("texture1", 0);
+	
 	// ---------------------------------
 	// 循环渲染
 	// ---------------------------------
-
+	
 	while (!glfwWindowShouldClose(window)) {
 		// 计算一帧的时间长度以便于使帧绘制速度均匀
 		setDeltaTime();
@@ -219,8 +256,13 @@ int main()
 		handleKeyInput(window);
 
 		// 渲染背景
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		//	由于Font.Configure()后Blend设置为了RGBA的混合值, 故需要重置Blend, 
+		//	否则会产生黑边/黑底
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
 		// ---------------------------------
 		// 渲染获得场景的深度信息
@@ -286,6 +328,9 @@ int main()
 		renderSkyBox(skyboxShader);
 		// 复原深度测试
 		glDepthFunc(GL_LESS);
+		
+		//  Text Rendering
+		renderGUI(textShader, quadsShader);
 
 		// 交换缓冲区和调查IO事件（按下的按键,鼠标移动等）
 		glfwSwapBuffers(window);
@@ -293,10 +338,11 @@ int main()
 		// 轮询事件
 		glfwPollEvents();
 	}
-
+	
 	// 关闭glfw
 	glfwTerminate();
 	return 0;
+
 }
 
 // ------------------------------------------
@@ -389,6 +435,44 @@ void skyboxInit()
 	cubemapTexture = loadCubemap(faces);
 }
 
+//  Text Rendering
+void textTextureInit(Shader& shader)
+{
+	Text ammoText, healthText;
+
+	ammoText.Configure(shader, "asset/Fonts/Roboto-BoldItalic.ttf");
+	ammoText.SetText("35");
+	ammoText.SetScale(0.8f);
+	ammoText.SetPosition(textObjectsPos[0]);
+	ammoText.SetColor(glm::vec3(0.5, 0.8f, 0.2f));
+	textObjects.push_back(ammoText);
+
+	healthText.Configure(shader, "asset/Fonts/Roboto-BoldItalic.ttf");
+	healthText.SetText("100");
+	healthText.SetScale(0.8f);
+	healthText.SetPosition(textObjectsPos[1]);
+	healthText.SetColor(glm::vec3(0.3, 0.7f, 0.9f));
+	textObjects.push_back(healthText);
+}
+
+//  Quad Rendering: Ammo, Health, crossHair
+void quadsTextureInit()
+{
+	Quads ammoIcon(quadsSize[0], quadsSize[0], quadsObjectsPos[0].x, quadsObjectsPos[0].y),
+		healthIcon(quadsSize[1], quadsSize[1], quadsObjectsPos[1].x, quadsObjectsPos[1].y),
+		//	we adjust crossHair position here, 
+		//	bcz posx and posy in Quads are left-down positions
+		crossHair (quadsSize[2], quadsSize[2],	SCR_WIDTH  / 2 - quadsSize[2] * 0.5 * SCR_WIDTH,		 
+												SCR_HEIGHT / 2 - quadsSize[2] * 0.5 * SCR_HEIGHT);
+
+	ammoIcon.loadTextures("asset/textures/Ammo.png");
+	quadsObjects.push_back(ammoIcon);
+	healthIcon.loadTextures("asset/textures/HealthIcon.png");
+	quadsObjects.push_back(healthIcon);
+	crossHair.loadTextures("asset/textures/crossHair.png");
+	quadsObjects.push_back(crossHair);
+}
+
 // ---------------------------------
 // 时间相关函数
 // ---------------------------------
@@ -439,7 +523,19 @@ void renderLight(Shader& shader)
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 }
 
+void renderGUI(Shader& textShader, Shader& quadsShader)
+{
+	for (unsigned int i = 0; i < quadsObjects.size(); i++) {
+		quadsShader.use();
+		quadsObjects[i].activateTexture();
+		quadsObjects[i].draw();
+	}
 
+	for (unsigned int i = 0; i < textObjects.size(); i++) {
+		textObjects[i].SetPosition(textObjectsPos[i]);
+		textObjects[i].Render(textShader);
+	}
+}
 
 
 void renderGunAndCamera(Gun& curGun, Model& cameraModel, Shader& shader)
