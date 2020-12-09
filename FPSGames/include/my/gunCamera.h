@@ -8,7 +8,7 @@
 
 #include <queue>
 
-// 定义汽车移动的几个可能的选项
+// 定义人物移动的几个可能的选项
 enum Direction {
 	_FORWARD,
 	_BACKWARD,
@@ -24,13 +24,6 @@ public:
 	glm::vec3 Left;
 	float Yaw;
 	float Pitch;
-	queue<float> HistoryYaw;
-	queue<float> HistoryPitch;
-	int DelayFrameNum = 1;
-	float DelayYaw;
-	float DelayPitch;
-	queue<glm::vec3> HistoryPosition;
-	glm::vec3 DelayPosition;
 
 	float MovementSpeed;
 	float TurningSpeed;
@@ -40,7 +33,6 @@ public:
 		, TurningSpeed(90.0f)
 		, Yaw(0.0f)
 		, Pitch(0.0f)
-		, DelayYaw(0.0f)
 	{
 		Position = position;
 		updateFront();
@@ -60,34 +52,9 @@ public:
 	{
 		return Pitch;
 	}
-	float getDelayYaw()
-	{
-		return DelayYaw;
-	}
-	float getDelayPitch()
-	{
-		return DelayPitch;
-	}
-	float getYawDif()
-	{
-		return Yaw - DelayYaw;
-	}
-	float getPitchDif()
-	{
-		return Pitch - DelayPitch;
-	}
-	float getMidValYaw()
-	{
-		return (DelayYaw + Yaw) / 2;
-	}
-	float getMidValPitch()
-	{
-		return (DelayPitch + Pitch) / 2;
-	}
-	glm::vec3 getMidValPosition()
-	{
-		return (DelayPosition + Position) / 2.0f;
-	}
+
+
+
 
 	// 计算视图矩阵
 	glm::mat4 GetViewMatrix(glm::vec3 cameraPosition)
@@ -110,33 +77,6 @@ public:
 			Position -= Left * MovementSpeed * deltaTime;
 		updateFront();
 		updateLeft();
-	}
-
-	// 更新DalayYaw
-	void UpdateDelayYaw()
-	{
-		HistoryYaw.push(Yaw);
-		while (HistoryYaw.size() > DelayFrameNum) {
-			HistoryYaw.pop();
-		}
-		DelayYaw = HistoryYaw.front();
-	}
-	void UpdateDelayPitch()
-	{
-		HistoryPitch.push(Pitch);
-		while (HistoryPitch.size() > DelayFrameNum) {
-			HistoryPitch.pop();
-		}
-		DelayPitch = HistoryPitch.front();
-	}
-	// 更新DalayYaw
-	void UpdateDelayPosition()
-	{
-		HistoryPosition.push(Position);
-		while (HistoryPosition.size() > DelayFrameNum) {
-			HistoryPosition.pop();
-		}
-		DelayPosition = HistoryPosition.front();
 	}
 	// 接受鼠标移动
 	void ProcessMouseMovement(float xoffset, float yoffset)
@@ -164,9 +104,9 @@ private:
 	void updateFront()
 	{
 		glm::vec3 front;
-		front.x = -sin(glm::radians(getMidValYaw()));
+		front.x = -sin(glm::radians(getYaw()));
 		front.y = 0.0f;
-		front.z = -cos(glm::radians(getMidValYaw()));
+		front.z = -cos(glm::radians(getYaw()));
 		Front = glm::normalize(front);
 	}
 	void updateLeft()

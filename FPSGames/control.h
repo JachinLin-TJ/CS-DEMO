@@ -2,6 +2,7 @@
 #include "GLFW/glfw3.h"
 #include"utils.h"
 extern GunCamera gunCamera;
+extern Camera camera;
 extern float deltaTime;
 extern float lastX, lastY;
 extern bool firstMouse;

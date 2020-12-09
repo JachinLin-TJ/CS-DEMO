@@ -65,7 +65,8 @@ bool isPolygonMode = false;
 GunCamera gunCamera(glm::vec3(0.0f, 0.05f, 0.0f));
 
 // 相机
-glm::vec3 cameraPos(0.0f, 2.0f, 5.0f);
+//glm::vec3 cameraPos(0.0f, 2.0f, 5.0f);
+glm::vec3 cameraPos(0.0f, 2.0f, 0.0f);
 Camera camera(cameraPos);
 FixedCamera fixedCamera(cameraPos);
 
@@ -306,9 +307,7 @@ int main()
 		// 设置光照相关属性
 		renderLight(shader);
 
-		gunCamera.UpdateDelayYaw();
-		gunCamera.UpdateDelayPitch();
-		gunCamera.UpdateDelayPosition();
+
 
 
 		updateFixedCamera();
@@ -497,15 +496,16 @@ void updateFixedCamera()
 	// 自动逐渐复原Zoom为默认值
 	camera.ZoomRecover();
 	// 处理相机相对于车坐标系下的向量坐标转换为世界坐标系下的向量
-	float angle = glm::radians(-gunCamera.getMidValYaw());
+	float angle = glm::radians(-gunCamera.getYaw());
 	glm::mat4 rotateMatrix(
 		cos(angle), 0.0, sin(angle), 0.0,
 		0.0, 1.0, 0.0, 0.0,
 		-sin(angle), 0.0, cos(angle), 0.0,
 		0.0, 0.0, 0.0, 1.0);
 	glm::vec3 rotatedPosition = glm::vec3(rotateMatrix * glm::vec4(fixedCamera.getPosition(), 1.0));
+	camera.FixView(rotatedPosition + gunCamera.getPosition(), fixedCamera.getYaw() + gunCamera.getYaw(), gunCamera.getPitch());
 
-	camera.FixView(rotatedPosition + gunCamera.getMidValPosition(), fixedCamera.getYaw() + gunCamera.getMidValYaw(), gunCamera.getMidValPitch());
+	//camera.FixView(rotatedPosition + gunCamera.getMidValPosition(), fixedCamera.getYaw() + gunCamera.getMidValYaw(), gunCamera.getMidValPitch());
 }
 
 // ---------------------------------
@@ -552,9 +552,10 @@ void renderGunAndCamera(Gun& curGun, Model& cameraModel, Shader& shader)
 
 	// 模型转换
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
-	modelMatrix = glm::translate(modelMatrix, gunCamera.getMidValPosition());
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(gunCamera.getDelayYaw() / 2), WORLD_UP);
-
+	//modelMatrix = glm::translate(modelMatrix, gunCamera.getMidValPosition());
+	//modelMatrix = glm::rotate(modelMatrix, glm::radians(gunCamera.getDelayYaw() / 2), WORLD_UP);
+	modelMatrix = glm::translate(modelMatrix, gunCamera.getPosition());
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(gunCamera.getYaw() / 2), WORLD_UP);
 	// 渲染枪支
 	curGun.Display_HoldGun(camera, shader, modelMatrix, gunCamera);
 	// renderGun(gunModel, modelMatrix, shader);
@@ -569,6 +570,7 @@ void renderGunAndCamera(Gun& curGun, Model& cameraModel, Shader& shader)
 void renderCamera(Model& model, glm::mat4 modelMatrix, Shader& shader)
 {
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(fixedCamera.getYaw() + gunCamera.getYaw() / 2), WORLD_UP);
+
 	modelMatrix = glm::translate(modelMatrix, cameraPos);
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.01f, 0.01f, 0.01f));
 
@@ -604,8 +606,8 @@ void GunRotate(glm::mat4& modelMatrix, const glm::vec3& Point, float degree)
 }
 void renderGun(Model& model, glm::mat4 modelMatrix, Shader& shader)
 {
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(gunCamera.getYaw() - gunCamera.getDelayYaw() / 2), WORLD_UP);
-	GunRotate(modelMatrix, glm::vec3(0.0f, 0.0f, 4.0f), (gunCamera.getPitch() - gunCamera.getDelayPitch() / 2));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(gunCamera.getYaw() - gunCamera.getYaw() / 2), WORLD_UP);
+	GunRotate(modelMatrix, glm::vec3(0.0f, 0.0f, 4.0f), (gunCamera.getPitch() - gunCamera.getPitch() / 2));
 
 	// modelMatrix = glm::rotate(modelMatrix, glm::radians(-(car.getPitch() - car.getDelayPitch() / 2)), WORLD_X);
 
