@@ -8,9 +8,8 @@
 #include "include/learnopengl/filesystem.h"
 #include "include/learnopengl/model.h"
 #include "include/learnopengl/shader_m.h"
-
-#include "include/my/gunCamera.h"
 #include "include/stb_image.h"
+
 #include <iostream>
 #include "GLFW/glfw3.h"
 #include "gun.h"
@@ -34,7 +33,7 @@ void textTextureInit(Shader& shader);
 void quadsTextureInit();
 
 void setDeltaTime();
-void updateFixedCamera();
+
 
 // 使用“&”引用性能更好
 void renderLight(Shader& shader);
@@ -61,11 +60,11 @@ unsigned int loadCubemap(vector<std::string> faces);
 bool isPolygonMode = false;
 
 // 视角相机
-GunCamera gunCamera(glm::vec3(0.0f, 0.05f, 0.0f));
+//GunCamera gunCamera(glm::vec3(0.0f, 0.0f, 0.0f));
 
 // 相机
 //glm::vec3 cameraPos(0.0f, 2.0f, 5.0f);
-glm::vec3 cameraPos(0.0f, 2.0f, 0.0f);
+const glm::vec3 cameraPos(0.0f, 5.0f, 0.0f);
 Camera camera(cameraPos);
 
 
@@ -309,7 +308,7 @@ int main()
 
 
 
-		updateFixedCamera();
+	
 
 		// 使用shader渲染Gun和Camera（层级模型）
 		renderGunAndCamera(curGun, cameraModel, shader);
@@ -490,23 +489,7 @@ void setDeltaTime()
 // ---------------------------------
 
 
-void updateFixedCamera()
-{
-	// 自动逐渐复原Zoom为默认值
-	camera.ZoomRecover();
-	// 处理相机相对于车坐标系下的向量坐标转换为世界坐标系下的向量
-	float angle = glm::radians(-gunCamera.getYaw());
-	glm::mat4 rotateMatrix(
-		cos(angle), 0.0, sin(angle), 0.0,
-		0.0, 1.0, 0.0, 0.0,
-		-sin(angle), 0.0, cos(angle), 0.0,
-		0.0, 0.0, 0.0, 1.0);
 
-	glm::vec3 rotatedPosition = glm::vec3(rotateMatrix * glm::vec4(cameraPos, 1.0));
-
-	camera.FixView(rotatedPosition + gunCamera.getPosition(),gunCamera.getYaw(), gunCamera.getPitch());
-
-}
 // ---------------------------------
 // 渲染函数
 // ---------------------------------
@@ -514,7 +497,7 @@ void updateFixedCamera()
 // 设置光照相关属性
 void renderLight(Shader& shader)
 {
-	shader.setVec3("viewPos", camera.Position);
+	shader.setVec3("viewPos", camera.getPosition());
 	shader.setVec3("lightDirection", lightDirection);
 	shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
@@ -552,10 +535,10 @@ void renderGunAndCamera(Gun& curGun, Model& cameraModel, Shader& shader)
 	// 模型转换
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
 
-	modelMatrix = glm::translate(modelMatrix, gunCamera.getPosition());
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(gunCamera.getYaw() / 2), WORLD_UP);
+	modelMatrix = glm::translate(modelMatrix, camera.getPosition());
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(camera.getYaw() / 2), WORLD_UP);
 	// 渲染枪支
-	curGun.Display_HoldGun(camera, shader, modelMatrix, gunCamera);
+	curGun.Display_HoldGun(camera, shader, modelMatrix);
 	// renderGun(gunModel, modelMatrix, shader);
 
 	// 由于mat4作函数参数时为值传递，故不需要备份modelMatrix
@@ -567,7 +550,7 @@ void renderGunAndCamera(Gun& curGun, Model& cameraModel, Shader& shader)
 
 void renderCamera(Model& model, glm::mat4 modelMatrix, Shader& shader)
 {
-	modelMatrix = glm::rotate(modelMatrix, glm::radians( gunCamera.getYaw() / 2), WORLD_UP);
+	modelMatrix = glm::rotate(modelMatrix, glm::radians( camera.getYaw() / 2), WORLD_UP);
 	modelMatrix = glm::translate(modelMatrix, cameraPos);
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.01f, 0.01f, 0.01f));
 
@@ -603,8 +586,8 @@ void GunRotate(glm::mat4& modelMatrix, const glm::vec3& Point, float degree)
 }
 void renderGun(Model& model, glm::mat4 modelMatrix, Shader& shader)
 {
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(gunCamera.getYaw() - gunCamera.getYaw() / 2), WORLD_UP);
-	GunRotate(modelMatrix, glm::vec3(0.0f, 0.0f, 4.0f), (gunCamera.getPitch() - gunCamera.getPitch() / 2));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(camera.getYaw() - camera.getYaw() / 2), WORLD_UP);
+	GunRotate(modelMatrix, glm::vec3(0.0f, 0.0f, 4.0f), (camera.getPitch() - camera.getPitch() / 2));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.5f, 1.5f, 4.0f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(-180.0f), WORLD_UP);
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.01f, 0.01f, 0.01f));

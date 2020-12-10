@@ -13,17 +13,17 @@ void handleKeyInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-            gunCamera.ProcessKeyboard(_HIGHSPEED, deltaTime);
+            camera.ProcessKeyboard(_HIGHSPEED, deltaTime);
         else
-            gunCamera.ProcessKeyboard(_FORWARD, deltaTime);
+            camera.ProcessKeyboard(_FORWARD, deltaTime);
     }
        
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        gunCamera.ProcessKeyboard(_LEFT, deltaTime);
+        camera.ProcessKeyboard(_LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        gunCamera.ProcessKeyboard(_RIGHT, deltaTime);
+        camera.ProcessKeyboard(_RIGHT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        gunCamera.ProcessKeyboard(_BACKWARD, deltaTime);
+        camera.ProcessKeyboard(_BACKWARD, deltaTime);
 
     // 回调监听按键（一个按键只会触发一次事件）
     glfwSetKeyCallback(window, key_callback);
@@ -58,7 +58,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     lastX = xpos;
     lastY = ypos;
 
-    gunCamera.ProcessMouseMovement(xoffset, yoffset);
+    camera.ProcessMouseMovement(xoffset, yoffset);
 }
 //鼠标按键
 void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)

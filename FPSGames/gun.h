@@ -26,5 +26,5 @@ public:
 	int GetMaxAmmo();
 	int GetDamage();
 	Model& GetModel();
-	void Display_HoldGun(Camera& camera, Shader& shader, glm::mat4 modelMatrix, GunCamera& gunCamera);
+	void Display_HoldGun(Camera& camera, Shader& shader, glm::mat4 modelMatrix);
 };

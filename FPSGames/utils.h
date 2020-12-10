@@ -8,7 +8,6 @@
 #include "include/learnopengl/filesystem.h"
 #include "include/learnopengl/model.h"
 #include "include/learnopengl/shader_m.h"
-#include "include/my/gunCamera.h"
 
 // ´°¿Ú³ß´ç
 const unsigned int SCR_WIDTH = 1920;

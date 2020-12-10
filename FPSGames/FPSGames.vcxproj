@@ -157,7 +157,6 @@
     <ClInclude Include="control.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="gun.h" />
-    <ClInclude Include="include\my\gunCamera.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
