@@ -32,7 +32,7 @@ const float STADIA = 1000.0f;
 // 抽象相机类
 // 处理输入和计算相应的欧拉角、向量和矩阵以用于OpenGL
 class Camera {
-public:
+private:
 	// 相机的属性
 	glm::vec3 Position;
 	glm::vec3 Front;
@@ -46,6 +46,7 @@ public:
 	float MovementSpeed;
 	float MouseSensitivity;
 	float Zoom;
+public:
 	// 构造函数
 	Camera(
 		glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
@@ -180,6 +181,15 @@ public:
 			Zoom -= ZOOM_SPEED / 2;
 	}
 
+	glm::vec3 get_Position()
+	{
+		return this->Position;
+	}
+
+	glm::vec3 get_Front()
+	{
+		return this->Front;
+	}
 private:
 	// 通过相机的欧拉角计算 Front、Right、Up 向量
 	void updateCameraVectors()
@@ -187,10 +197,10 @@ private:
 		// 计算新的 Front 向量
 		glm::vec3 front;
 		front.x = -sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-		//front.y = sin(glm::radians(Pitch));
 		front.y = sin(glm::radians(Pitch));
 		front.z = -cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
 		Front = glm::normalize(front);
+
 		// 重新计算 Right 和 Up 向量
 		Right = glm::normalize(glm::cross(Front, WorldUp));
 		Up = glm::normalize(glm::cross(Right, Front));
