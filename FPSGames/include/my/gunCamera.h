@@ -24,7 +24,6 @@ public:
 	glm::vec3 Left;
 	float Yaw;
 	float Pitch;
-
 	float MovementSpeed;
 	float TurningSpeed;
 
@@ -84,7 +83,6 @@ public:
 		float MouseSensitivity = 0.1f;
 		xoffset *= MouseSensitivity;
 		yoffset *= MouseSensitivity;
-
 		Yaw -= xoffset;
 		Pitch += yoffset;
 

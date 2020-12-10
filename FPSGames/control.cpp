@@ -59,8 +59,6 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     lastY = ypos;
 
     gunCamera.ProcessMouseMovement(xoffset, yoffset);
-    camera.ProcessMouseMovement(xoffset, yoffset);
-    //}
 }
 //Êó±ê°´¼ü
 void mouseButton_callback(GLFWwindow* window, int button, int action, int mods)
