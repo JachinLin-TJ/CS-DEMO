@@ -21,9 +21,6 @@
 #pragma comment(lib, "assimp.lib")
 #pragma comment(lib, "freetype.lib")
 
-// ------------------------------------------
-// 函数声明
-// ------------------------------------------
 
 GLFWwindow* windowInit();
 bool init();
@@ -39,8 +36,6 @@ void setDeltaTime();
 void renderLight(Shader& shader);
 void renderGunAndCamera(Gun& curGun, Model& cameraModel, Shader& shader);
 void renderCamera(Model& model, glm::mat4 modelMatrix, Shader& shader);
-void renderGun(Model& model, glm::mat4 modelMatrix, Shader& shader);
-void renderGun(Model& model, Shader& shader);
 void renderMap(Model& model, Shader& shader);
 void renderEnemy(Model& model, Shader& shader);
 void renderSkyBox(Shader& shader);
@@ -59,19 +54,9 @@ unsigned int loadCubemap(vector<std::string> faces);
 
 bool isPolygonMode = false;
 
-// 视角相机
-//GunCamera gunCamera(glm::vec3(0.0f, 0.0f, 0.0f));
 
-// 相机
-//glm::vec3 cameraPos(0.0f, 2.0f, 5.0f);
-const glm::vec3 cameraPos(0.0f, 5.0f, 0.0f);
 Camera camera(cameraPos);
 
-
-
-// 光照相关属性
-glm::vec3 lightPos(-1.0f, 1.0f, -1.0f);
-glm::vec3 lightDirection = glm::normalize(lightPos);
 glm::mat4 lightSpaceMatrix;
 
 // 深度Map的ID
@@ -91,73 +76,18 @@ float lastFrame = 0.0f;
 unsigned int cubemapTexture;
 unsigned int skyboxVAO, skyboxVBO;
 
-// 天空盒顶点数据
-const float skyboxVertices[] = {
-	// positions
-	-1.0f, 1.0f, -1.0f,
-	-1.0f, -1.0f, -1.0f,
-	1.0f, -1.0f, -1.0f,
-	1.0f, -1.0f, -1.0f,
-	1.0f, 1.0f, -1.0f,
-	-1.0f, 1.0f, -1.0f,
-
-	-1.0f, -1.0f, 1.0f,
-	-1.0f, -1.0f, -1.0f,
-	-1.0f, 1.0f, -1.0f,
-	-1.0f, 1.0f, -1.0f,
-	-1.0f, 1.0f, 1.0f,
-	-1.0f, -1.0f, 1.0f,
-
-	1.0f, -1.0f, -1.0f,
-	1.0f, -1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f, -1.0f,
-	1.0f, -1.0f, -1.0f,
-
-	-1.0f, -1.0f, 1.0f,
-	-1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f, -1.0f, 1.0f,
-	-1.0f, -1.0f, 1.0f,
-
-	-1.0f, 1.0f, -1.0f,
-	1.0f, 1.0f, -1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	-1.0f, 1.0f, 1.0f,
-	-1.0f, 1.0f, -1.0f,
-
-	-1.0f, -1.0f, -1.0f,
-	-1.0f, -1.0f, 1.0f,
-	1.0f, -1.0f, -1.0f,
-	1.0f, -1.0f, -1.0f,
-	-1.0f, -1.0f, 1.0f,
-	1.0f, -1.0f, 1.0f
-};
-
-// 天空盒的面数据
-const vector<std::string> faces{
-	FileSystem::getPath("asset/textures/skybox/right.tga"),
-	FileSystem::getPath("asset/textures/skybox/left.tga"),
-	FileSystem::getPath("asset/textures/skybox/top.tga"),
-	FileSystem::getPath("asset/textures/skybox/bottom.tga"),
-	FileSystem::getPath("asset/textures/skybox/front.tga"),
-	FileSystem::getPath("asset/textures/skybox/back.tga")
-};
 
 //  Text Rendering
 std::vector<Text> textObjects;
 const std::vector<glm::vec2> textObjectsPos = {
-	glm::vec2(SCR_WIDTH		/ 32 + 100.0f,	SCR_HEIGHT / 12),
+	glm::vec2(SCR_WIDTH / 32 + 100.0f,	SCR_HEIGHT / 12),
 	glm::vec2(SCR_WIDTH * 5 / 32 + 100.0f,	SCR_HEIGHT / 12)
 };
 
 //  Quads Rendering: AmmoIcon, HealthIcon, CrossHair
 std::vector<Quads> quadsObjects;
 const std::vector<glm::vec2> quadsObjectsPos = {
-	glm::vec2(SCR_WIDTH		/ 32,	SCR_HEIGHT / 12),
+	glm::vec2(SCR_WIDTH / 32,	SCR_HEIGHT / 12),
 	glm::vec2(SCR_WIDTH * 5 / 32,	SCR_HEIGHT / 12)
 };
 
@@ -171,10 +101,7 @@ const std::vector<float> quadsSize = {
 
 int main()
 {
-	
-	// ------------------------------
-	// 初始化
-	// ------------------------------
+
 
 	// 窗口初始化
 	GLFWwindow* window = windowInit();
@@ -188,12 +115,8 @@ int main()
 	// 天空盒的配置
 	skyboxInit();
 
-	// ------------------------------
-	// 构建和编译着色器
-	// ------------------------------
-	
+
 	// 为所有物体添加光照和阴影的shader
-	// BUG:在地图上无法显示阴影
 	Shader shader("shader/light_and_shadow.vs", "shader/light_and_shadow.fs");
 	// 从太阳平行光角度生成深度信息的shader
 	//Shader depthShader("shader/shadow_mapping_depth.vs", "shader/shadow_mapping_depth.fs");
@@ -203,7 +126,7 @@ int main()
 	// Quad Texture Shader
 	Shader quadsShader("shader/Quads.vs", "shader/Quads.fs");
 	Shader textShader("shader/Text.vs", "shader/Text.fs");
-	
+
 	// ------------------------------
 	// 模型加载
 	// ------------------------------
@@ -223,15 +146,12 @@ int main()
 	Gun curGun(FileSystem::getPath(AK_Path), 31, 30);
 
 	// Gun curGun(FileSystem::getPath(AWP_Path), 31, 30);
-	
+
 	//	texture conflicts ?
 	//	put quads and text texture rendering after gun rendering
 	quadsTextureInit();
 	textTextureInit(textShader);
 
-	// ---------------------------------
-	// shader 纹理配置
-	// ---------------------------------
 
 	shader.use();
 	shader.setInt("diffuseTexture", 0);
@@ -242,11 +162,11 @@ int main()
 
 	quadsShader.use();
 	quadsShader.setInt("texture1", 0);
-	
+
 	// ---------------------------------
 	// 循环渲染
 	// ---------------------------------
-	
+
 	while (!glfwWindowShouldClose(window)) {
 		// 计算一帧的时间长度以便于使帧绘制速度均匀
 		setDeltaTime();
@@ -306,10 +226,6 @@ int main()
 		renderLight(shader);
 
 
-
-
-	
-
 		// 使用shader渲染Gun和Camera（层级模型）
 		renderGunAndCamera(curGun, cameraModel, shader);
 		renderEnemy(enemyModel, shader);
@@ -325,7 +241,7 @@ int main()
 		renderSkyBox(skyboxShader);
 		// 复原深度测试
 		glDepthFunc(GL_LESS);
-		
+
 		//  Text Rendering
 		renderGUI(textShader, quadsShader);
 
@@ -335,21 +251,13 @@ int main()
 		// 轮询事件
 		glfwPollEvents();
 	}
-	
+
 	// 关闭glfw
 	glfwTerminate();
 	return 0;
 
 }
 
-// ------------------------------------------
-// 其他函数
-// ------------------------------------------
-
-
-// ---------------------------------
-// 初始化
-// ---------------------------------
 
 GLFWwindow* windowInit()
 {
@@ -459,8 +367,8 @@ void quadsTextureInit()
 		healthIcon(quadsSize[1], quadsSize[1], quadsObjectsPos[1].x, quadsObjectsPos[1].y),
 		//	we adjust crossHair position here, 
 		//	bcz posx and posy in Quads are left-down positions
-		crossHair (quadsSize[2], quadsSize[2],	SCR_WIDTH  / 2 - quadsSize[2] * 0.5 * SCR_WIDTH,		 
-												SCR_HEIGHT / 2 - quadsSize[2] * 0.5 * SCR_HEIGHT);
+		crossHair(quadsSize[2], quadsSize[2], SCR_WIDTH / 2 - quadsSize[2] * 0.5 * SCR_WIDTH,
+			SCR_HEIGHT / 2 - quadsSize[2] * 0.5 * SCR_HEIGHT);
 
 	ammoIcon.loadTextures("asset/textures/Ammo.png");
 	quadsObjects.push_back(ammoIcon);
@@ -470,10 +378,6 @@ void quadsTextureInit()
 	quadsObjects.push_back(crossHair);
 }
 
-// ---------------------------------
-// 时间相关函数
-// ---------------------------------
-
 // 计算一帧的时间长度
 void setDeltaTime()
 {
@@ -481,18 +385,6 @@ void setDeltaTime()
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
 }
-
-
-
-// ---------------------------------
-// 相机位置更新
-// ---------------------------------
-
-
-
-// ---------------------------------
-// 渲染函数
-// ---------------------------------
 
 // 设置光照相关属性
 void renderLight(Shader& shader)
@@ -504,7 +396,6 @@ void renderLight(Shader& shader)
 	glActiveTexture(GL_TEXTURE15);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 }
-
 void renderGUI(Shader& textShader, Shader& quadsShader)
 {
 	for (unsigned int i = 0; i < quadsObjects.size(); i++) {
@@ -518,8 +409,6 @@ void renderGUI(Shader& textShader, Shader& quadsShader)
 		textObjects[i].Render(textShader);
 	}
 }
-
-
 void renderGunAndCamera(Gun& curGun, Model& cameraModel, Shader& shader)
 {
 	// 视图转换
@@ -539,18 +428,13 @@ void renderGunAndCamera(Gun& curGun, Model& cameraModel, Shader& shader)
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(camera.getYaw() / 2), WORLD_UP);
 	// 渲染枪支
 	curGun.Display_HoldGun(camera, shader, modelMatrix);
-	// renderGun(gunModel, modelMatrix, shader);
-
-	// 由于mat4作函数参数时为值传递，故不需要备份modelMatrix
 
 	// 渲染相机
 	renderCamera(cameraModel, modelMatrix, shader);
 }
-
-
 void renderCamera(Model& model, glm::mat4 modelMatrix, Shader& shader)
 {
-	modelMatrix = glm::rotate(modelMatrix, glm::radians( camera.getYaw() / 2), WORLD_UP);
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(camera.getYaw() / 2), WORLD_UP);
 	modelMatrix = glm::translate(modelMatrix, cameraPos);
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.01f, 0.01f, 0.01f));
 
@@ -575,48 +459,6 @@ void renderEnemy(Model& model, Shader& shader)
 
 	model.Draw(shader);
 }
-
-
-void GunRotate(glm::mat4& modelMatrix, const glm::vec3& Point, float degree)
-{
-	modelMatrix = glm::translate(modelMatrix, Point);
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(degree), WORLD_X);
-	modelMatrix = glm::translate(modelMatrix, -Point);
-
-}
-void renderGun(Model& model, glm::mat4 modelMatrix, Shader& shader)
-{
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(camera.getYaw() - camera.getYaw() / 2), WORLD_UP);
-	GunRotate(modelMatrix, glm::vec3(0.0f, 0.0f, 4.0f), (camera.getPitch() - camera.getPitch() / 2));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.5f, 1.5f, 4.0f));
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(-180.0f), WORLD_UP);
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.01f, 0.01f, 0.01f));
-
-	// GunRotate(modelMatrix, glm::vec3(0.0f, 0.0f, 10.0f), -(car.getPitch() - car.getDelayPitch() / 2));
-	// 
-	// 应用变换矩阵
-	shader.setMat4("model", modelMatrix);
-
-	model.Draw(shader);
-}
-
-void renderGun(Model& model, Shader& shader)
-{
-	// 视图转换
-	glm::mat4 viewMatrix = camera.GetViewMatrix();
-	shader.setMat4("view", viewMatrix);
-	// 模型转换
-	glm::mat4 modelMatrix = glm::mat4(1.0f);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(2.0f, 1.5f, -7.0f));
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(-180.0f), WORLD_UP);
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.01f, 0.01f, 0.01f));
-	shader.setMat4("model", modelMatrix);
-	// 投影转换
-	glm::mat4 projMatrix = camera.GetProjMatrix((float)SCR_WIDTH / (float)SCR_HEIGHT);
-	shader.setMat4("projection", projMatrix);
-
-	model.Draw(shader);
-}
 void renderMap(Model& model, Shader& shader)
 {
 	// 视图转换
@@ -631,7 +473,6 @@ void renderMap(Model& model, Shader& shader)
 
 	model.Draw(shader);
 }
-
 void renderSkyBox(Shader& shader)
 {
 	// viewMatrix 通过构造，移除相机的移动
@@ -648,22 +489,12 @@ void renderSkyBox(Shader& shader)
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 }
-
-// ---------------------------------
-// 窗口相关函数
-// ---------------------------------
-
 // 改变窗口大小的回调函数
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	// 确保窗口匹配的新窗口尺寸
 	glViewport(0, 0, width, height);
 }
-
-// ---------------------------------
-// 加载相关函数
-// ---------------------------------
-
 // 将六份纹理加载为一个cubemap纹理
 unsigned int loadCubemap(vector<std::string> faces)
 {
